@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import cn.tangjunwei.imagelibrary.GlideApp;
 import cn.tangjunwei.imagelibrary.R;
@@ -21,14 +21,14 @@ import cn.tangjunwei.imagelibrary.album.bean.AlbumBean;
 
 public class AlbumSelectAdapter extends BaseAdapter {
     
-    private ArrayList<AlbumBean> albums;
+    private List<AlbumBean> albums;
     
-    public AlbumSelectAdapter(ArrayList<AlbumBean> albums) {
+    public AlbumSelectAdapter(List<AlbumBean> albums) {
         this.albums = albums;
     }
     
     
-    public void setAlbums(ArrayList<AlbumBean> albums) {
+    public void setAlbums(List<AlbumBean> albums) {
         this.albums = albums;
         notifyDataSetChanged();
     }

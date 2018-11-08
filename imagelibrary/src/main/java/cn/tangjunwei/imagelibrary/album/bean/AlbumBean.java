@@ -1,7 +1,5 @@
 package cn.tangjunwei.imagelibrary.album.bean;
 
-import androidx.annotation.Nullable;
-
 /**
  * desc
  * <p>
@@ -10,13 +8,13 @@ import androidx.annotation.Nullable;
  * <a href="https://github.com/tangjw">Follow me</a>
  */
 public class AlbumBean {
-    private long id;
+    private String id;
     private String name;
     private String cover;
     private int count;
     private boolean selected;
     
-    public AlbumBean(long id, String name, String cover, int count, boolean selected) {
+    public AlbumBean(String id, String name, String cover, int count, boolean selected) {
         this.id = id;
         this.name = name;
         this.cover = cover;
@@ -24,12 +22,12 @@ public class AlbumBean {
         this.selected = selected;
     }
     
-    public void setId(long id) {
-        this.id = id;
+    public String getId() {
+        return id;
     }
     
-    public long getId() {
-        return id;
+    public void setId(String id) {
+        this.id = id;
     }
     
     public String getName() {
