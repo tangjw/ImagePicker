@@ -17,5 +17,12 @@
             android:name=".album.activity.ImageSelectActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
+
+        <activity
+            android:name=".crop.CropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        
     </application>
 </manifest>

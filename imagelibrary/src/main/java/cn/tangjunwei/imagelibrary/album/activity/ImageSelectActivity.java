@@ -37,6 +37,7 @@ import cn.tangjunwei.imagelibrary.album.adapter.AlbumSelectAdapter;
 import cn.tangjunwei.imagelibrary.album.adapter.ImageSelectAdapter;
 import cn.tangjunwei.imagelibrary.album.bean.AlbumBean;
 import cn.tangjunwei.imagelibrary.album.bean.ImageBean;
+import cn.tangjunwei.imagelibrary.crop.CropActivity;
 
 public class ImageSelectActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     
@@ -100,17 +101,6 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
         setViewActionListener();
     }
     
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        
-        mImageList = null;
-        if (adapter != null) {
-            //adapter.releaseResources();
-        }
-        gridView.setOnItemClickListener(null);
-    }
-    
     /**
      * 初始化数据, 查询图片和相册
      */
@@ -121,7 +111,7 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
         
         mLoaderManager = getSupportLoaderManager();
         LoadAllImage();
-    
+        
     }
     
     private void initView() {
@@ -156,10 +146,16 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                toggleSelection(position);
+                //toggleSelection(position);
+                // 打开头像剪切界面
+                String path = mImageList.get(position).path;
+                System.out.println(path);
+                Intent intent = new Intent(ImageSelectActivity.this, CropActivity.class);
+                intent.putExtra("path", path);
+                startActivity(intent);
             }
         });
-    
+        
         mTvAlbum.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -208,11 +204,11 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
                     mTvAlbum.setChecked(false);
                 }
             });
-        
+            
             mListPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                
+                    
                     if (mCurrentSelectedAlbum == position) {
                         mListPopupWindow.dismiss();
                         return;
@@ -225,22 +221,22 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
                     mTvAlbum.setText(albumBean.getName());
                     mAlbumSelectAdapter.notifyDataSetChanged();
                     mListPopupWindow.dismiss();
-                
+                    
                     mCurrentSelectedAlbum = position;
-                
+                    
                     loadAlbumImage(albumBean.getId());
                 }
             });
-        
+            
         }
-    
+        
         if (mAlbumSelectAdapter == null) {
             mAlbumSelectAdapter = new AlbumSelectAdapter(mAlbumList);
             mListPopupWindow.setAdapter(mAlbumSelectAdapter);
         } else {
             mAlbumSelectAdapter.setAlbums(mAlbumList);
         }
-    
+        
         mListPopupWindow.show();
     }
     
@@ -271,7 +267,7 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         CursorLoader loader;
         String albumId = args.getString(BUCKET_ID);
-    
+        
         if (albumId == null) {  // 加载全部
             loader = new CursorLoader(this,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
@@ -309,10 +305,10 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
             String img_name = data.getString(data.getColumnIndex(projection[1]));
             String img_path = data.getString(data.getColumnIndex(projection[2]));
             mImageList.add(new ImageBean(img_id, img_name, img_path, mSelectedIdSet.contains(img_id)));
-    
+            
             String bucket_id = data.getString(data.getColumnIndex(projection[3]));
             String bucket_name = data.getString(data.getColumnIndex(projection[4]));
-    
+            
             if (mAlbumMap != null) {
                 if (i == 0) {
                     AlbumBean albumBean = mAlbumMap.get(null);
