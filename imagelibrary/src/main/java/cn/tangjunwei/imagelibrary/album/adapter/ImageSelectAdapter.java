@@ -4,70 +4,86 @@ import android.content.Context;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import cn.tangjunwei.imagelibrary.GlideApp;
 import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.bean.ImageBean;
 
-public class ImageSelectAdapter extends CustomGenericAdapter<ImageBean> {
+public class ImageSelectAdapter extends BaseAdapter {
+    private List<ImageBean> mList;
     
-    public ImageSelectAdapter(Context context, ArrayList<ImageBean> images) {
-        super(context, images);
+    public ImageSelectAdapter(List<ImageBean> list) {
+        mList = list;
+    }
+    
+    public void refreshData(List<ImageBean> list) {
+        mList = list;
+        notifyDataSetChanged();
+    }
+    
+    @Override
+    public int getCount() {
+        return mList == null ? 0 : mList.size();
+    }
+    
+    @Override
+    public ImageBean getItem(int position) {
+        return mList.get(position);
+    }
+    
+    @Override
+    public long getItemId(int position) {
+        return getItem(position).id;
     }
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-        
+        Context context = parent.getContext();
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.grid_view_item_image_select, parent, false);
+            convertView = View.inflate(context, R.layout.grid_view_item_image_select, null);
             
             viewHolder = new ViewHolder();
             viewHolder.imageView = convertView.findViewById(R.id.image_view_image_select);
             viewHolder.view = convertView.findViewById(R.id.view_alpha);
-            
             convertView.setTag(viewHolder);
             
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        
-        viewHolder.imageView.getLayoutParams().width = size;
-        viewHolder.imageView.getLayoutParams().height = size;
-        
-        viewHolder.view.getLayoutParams().width = size;
-        viewHolder.view.getLayoutParams().height = size;
-        
-        if (arrayList.get(position).isSelected) {
+    
+        if (mList.get(position).isSelected) {
             viewHolder.view.setAlpha(0.5f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                convertView.setForeground(context.getResources().getDrawable(R.drawable.ic_done_white));
+                convertView.setForeground(context.getDrawable(R.drawable.ic_done_white));
             }
-    
         } else {
             viewHolder.view.setAlpha(0.0f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 convertView.setForeground(null);
             }
         }
-        
-        if (arrayList.get(position).path.endsWith(".gif") || arrayList.get(position).path.contains(".gif")) {
+    
+        if (mList.get(position).path.endsWith(".gif") || mList.get(position).path.contains(".gif")) {
             // TODO: 11/14 gif
             GlideApp.with(context)
-                    .load(arrayList.get(position).path)
+                    .load(mList.get(position).path)
                     .placeholder(R.drawable.image_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .into(viewHolder.imageView);
         } else {
             GlideApp.with(context)
-                    .load(arrayList.get(position).path)
+                    .load(mList.get(position).path)
                     .placeholder(R.drawable.image_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(viewHolder.imageView);
         }
         

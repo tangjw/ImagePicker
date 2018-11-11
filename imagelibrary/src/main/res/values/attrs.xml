@@ -4,4 +4,8 @@
         <attr name="padding_horizontal" format="dimension"/>
         <attr name="border_width" format="dimension"/>
     </declare-styleable>
+    <declare-styleable name="RatioFrameLayout">
+        <attr name="ratio_width" format="float"/>
+        <attr name="ratio_height" format="float"/>
+    </declare-styleable>
 </resources>

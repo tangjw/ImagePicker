@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.List;
 
 import cn.tangjunwei.imagelibrary.GlideApp;
@@ -70,7 +72,7 @@ public class AlbumSelectAdapter extends BaseAdapter {
         
         
         viewHolder.textView.setText(albums.get(position).getName());
-        viewHolder.textView1.setText(albums.get(position).getCount() + "张");
+        viewHolder.textView1.setText(String.format(parent.getContext().getString(R.string.format_count), albums.get(position).getCount()));
         viewHolder.radioButton.setChecked(albums.get(position).isSelected());
         
         if (albums.get(position).getCover().endsWith(".gif") || albums.get(position).getCover().contains(".gif")) {
@@ -78,11 +80,13 @@ public class AlbumSelectAdapter extends BaseAdapter {
             GlideApp.with(parent.getContext())
                     .load(albums.get(position).getCover())
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .into(viewHolder.imageView);
         } else {
             GlideApp.with(parent.getContext())
                     .load(albums.get(position).getCover())
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .into(viewHolder.imageView);
         }
         

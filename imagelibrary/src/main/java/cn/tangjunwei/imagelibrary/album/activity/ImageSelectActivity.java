@@ -1,8 +1,6 @@
 package cn.tangjunwei.imagelibrary.album.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,7 +8,6 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.LongSparseArray;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -344,16 +341,16 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
         }
         
         if (adapter == null) {
-            adapter = new ImageSelectAdapter(getApplicationContext(), mImageList);
+            adapter = new ImageSelectAdapter(mImageList);
             gridView.setAdapter(adapter);
         } else {
-            adapter.setArrayList(mImageList);
+            adapter.refreshData(mImageList);
         }
         
         
         progressBar.setVisibility(View.INVISIBLE);
         gridView.setVisibility(View.VISIBLE);
-        orientationBasedUI(getResources().getConfiguration().orientation);
+        //orientationBasedUI(getResources().getConfiguration().orientation);
         
         
     }
@@ -361,25 +358,6 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         
-    }
-    
-    
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        orientationBasedUI(newConfig.orientation);
-    }
-    
-    private void orientationBasedUI(int orientation) {
-        final WindowManager windowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-        final DisplayMetrics metrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getMetrics(metrics);
-        
-        if (adapter != null) {
-            int size = orientation == Configuration.ORIENTATION_PORTRAIT ? metrics.widthPixels / 4 : metrics.widthPixels / 5;
-            adapter.setLayoutParams(size);
-        }
-        gridView.setNumColumns(orientation == Configuration.ORIENTATION_PORTRAIT ? 4 : 5);
     }
     
     private void toggleSelection(int position) {

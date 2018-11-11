@@ -39,6 +39,7 @@
         android:layout_above="@+id/rl_select_album"
         android:layout_below="@+id/ll_toobar"
         android:background="#000"
+        android:numColumns="4"
         android:padding="1dp"
         android:stretchMode="columnWidth"/>
 
