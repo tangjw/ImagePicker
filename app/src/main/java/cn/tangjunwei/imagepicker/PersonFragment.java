@@ -49,6 +49,7 @@ public class PersonFragment extends BaseFragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         System.out.println("person: " + (hidden ? "invisible" : "visible"));
+        
     }
     
     
