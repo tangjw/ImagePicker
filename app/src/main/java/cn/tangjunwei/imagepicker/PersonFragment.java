@@ -12,8 +12,6 @@ import com.hjq.permissions.XXPermissions;
 
 import java.util.List;
 
-import cn.tangjunwei.imagelibrary.album.activity.ImageSelectActivity;
-
 
 public class PersonFragment extends BaseFragment {
     
@@ -119,6 +117,6 @@ public class PersonFragment extends BaseFragment {
     }
     
     private void openAlbumAct() {
-        startActivity(new Intent(mActivity, ImageSelectActivity.class));
+        startActivity(new Intent(mActivity, TestActivity.class));
     }
 }

@@ -8,11 +8,8 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import java.util.List;
 
-import cn.tangjunwei.imagelibrary.GlideApp;
 import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.bean.AlbumBean;
 
@@ -77,17 +74,17 @@ public class AlbumSelectAdapter extends BaseAdapter {
         
         if (albums.get(position).getCover().endsWith(".gif") || albums.get(position).getCover().contains(".gif")) {
             // TODO: 11/14 gif
-            GlideApp.with(parent.getContext())
+            /*GlideApp.with(parent.getContext())
                     .load(albums.get(position).getCover())
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .into(viewHolder.imageView);
+                    .into(viewHolder.imageView);*/
         } else {
-            GlideApp.with(parent.getContext())
+           /* GlideApp.with(parent.getContext())
                     .load(albums.get(position).getCover())
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .into(viewHolder.imageView);
+                    .into(viewHolder.imageView);*/
         }
         
         return convertView;

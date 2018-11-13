@@ -1,10 +1,12 @@
 package cn.tangjunwei.imagelibrary;
 
-import android.app.Activity;
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * desc
@@ -13,7 +15,7 @@ import androidx.fragment.app.Fragment;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public interface ImageLoader {
+public interface ImageLoader extends Parcelable {
 //    GlideApp.with(context)
 //            .load(mList.get(position).path)
 //            .placeholder(R.drawable.image_placeholder)
@@ -22,7 +24,14 @@ public interface ImageLoader {
 //            .into(viewHolder.imageView);
     
     void loadImage(Context context, String path, ImageView imageView);
-    void loadImage(Activity activity, String path, ImageView imageView);
+    
+    void loadImage(FragmentActivity activity, String path, ImageView imageView);
     
     void loadImage(Fragment fragment, String path, ImageView imageView);
+    
+    @Override
+    int describeContents();
+    
+    @Override
+    void writeToParcel(Parcel dest, int flags);
 }

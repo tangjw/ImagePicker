@@ -342,7 +342,7 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
         }
         
         if (adapter == null) {
-            adapter = new ImageSelectAdapter(mImageList,new ImageLoaderImpl());
+            adapter = new ImageSelectAdapter(mImageList, new ImageLoaderImpl());
             gridView.setAdapter(adapter);
         } else {
             adapter.refreshData(mImageList);

@@ -1,13 +1,11 @@
 package cn.tangjunwei.imagelibrary;
 
-import android.app.Activity;
 import android.content.Context;
+import android.os.Parcel;
 import android.widget.ImageView;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * desc
@@ -18,27 +16,42 @@ import androidx.fragment.app.Fragment;
  */
 public class ImageLoaderImpl implements ImageLoader {
     
-    @Override
-    public void loadImage(Context context, String path, ImageView imageView) {
-        loadImage(GlideApp.with(context), path, imageView);
+    public static final Creator<ImageLoaderImpl> CREATOR = new Creator<ImageLoaderImpl>() {
+        @Override
+        public ImageLoaderImpl createFromParcel(Parcel source) {
+            return new ImageLoaderImpl();
+        }
+        
+        @Override
+        public ImageLoaderImpl[] newArray(int size) {
+            return new ImageLoaderImpl[size];
+        }
+    };
+    
+    public ImageLoaderImpl() {
     }
     
     @Override
-    public void loadImage(Activity activity, String path, ImageView imageView) {
-        loadImage(GlideApp.with(activity), path, imageView);
+    public void loadImage(Context context, String path, ImageView imageView) {
+    
+    }
+    
+    @Override
+    public void loadImage(FragmentActivity activity, String path, ImageView imageView) {
+        
     }
     
     @Override
     public void loadImage(Fragment fragment, String path, ImageView imageView) {
-        loadImage(GlideApp.with(fragment), path, imageView);
+    
     }
     
-    private void loadImage(GlideRequests glideRequests, String path, ImageView imageView) {
-        glideRequests
-                .load(path)
-                .placeholder(R.drawable.image_placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(imageView);
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
     }
 }

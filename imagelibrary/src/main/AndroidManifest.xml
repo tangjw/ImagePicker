@@ -1,11 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="cn.tangjunwei.imagelibrary">
 
     <application>
-
         <provider
             android:name=".ImageLibFileProvider"
-            android:authorities="cn.tangjunwei.imagelibrary.fileprovider"
+            android:authorities="${applicationId}.imagelibrary.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -14,15 +14,10 @@
         </provider>
 
         <activity
-            android:name=".album.activity.ImageSelectActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-
-
-        <activity
             android:name=".crop.CropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-        
+
     </application>
+
 </manifest>

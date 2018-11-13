@@ -23,4 +23,7 @@
     <string name="error_null_cursor">咦? 手机里好像没有图片唉</string>
     <string name="album_name_all">所有图片</string>
     <string name="format_count">%d张</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

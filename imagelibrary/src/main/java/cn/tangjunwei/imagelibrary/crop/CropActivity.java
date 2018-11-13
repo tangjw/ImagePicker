@@ -10,9 +10,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,7 +17,6 @@ import java.io.IOException;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import cn.tangjunwei.imagelibrary.GlideApp;
 import cn.tangjunwei.imagelibrary.R;
 
 /**
@@ -56,12 +52,12 @@ public class CropActivity extends AppCompatActivity {
     private void loadImage() {
         
         String path = getIntent().getStringExtra("path");
-        GlideApp.with(this)
+        /*GlideApp.with(this)
                 .load(path)
                 //.fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .into(mZoomImageView);
+                .into(mZoomImageView);*/
     }
     
     public void save(View view) {
