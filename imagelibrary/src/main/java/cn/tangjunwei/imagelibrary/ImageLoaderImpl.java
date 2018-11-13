@@ -1,7 +1,11 @@
 package cn.tangjunwei.imagelibrary;
 
 import android.app.Activity;
+import android.content.Context;
 import android.widget.ImageView;
+
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import androidx.fragment.app.Fragment;
 
@@ -15,12 +19,26 @@ import androidx.fragment.app.Fragment;
 public class ImageLoaderImpl implements ImageLoader {
     
     @Override
+    public void loadImage(Context context, String path, ImageView imageView) {
+        loadImage(GlideApp.with(context), path, imageView);
+    }
+    
+    @Override
     public void loadImage(Activity activity, String path, ImageView imageView) {
-        
+        loadImage(GlideApp.with(activity), path, imageView);
     }
     
     @Override
     public void loadImage(Fragment fragment, String path, ImageView imageView) {
-        
+        loadImage(GlideApp.with(fragment), path, imageView);
+    }
+    
+    private void loadImage(GlideRequests glideRequests, String path, ImageView imageView) {
+        glideRequests
+                .load(path)
+                .placeholder(R.drawable.image_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(imageView);
     }
 }

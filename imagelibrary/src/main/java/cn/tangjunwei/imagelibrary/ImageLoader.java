@@ -1,6 +1,7 @@
 package cn.tangjunwei.imagelibrary;
 
 import android.app.Activity;
+import android.content.Context;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
@@ -20,6 +21,7 @@ public interface ImageLoader {
 //            .transition(DrawableTransitionOptions.withCrossFade())
 //            .into(viewHolder.imageView);
     
+    void loadImage(Context context, String path, ImageView imageView);
     void loadImage(Activity activity, String path, ImageView imageView);
     
     void loadImage(Fragment fragment, String path, ImageView imageView);

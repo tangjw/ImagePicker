@@ -7,21 +7,24 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-
 import java.util.List;
 
-import cn.tangjunwei.imagelibrary.GlideApp;
+import cn.tangjunwei.imagelibrary.ImageLoader;
 import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.bean.ImageBean;
 
 public class ImageSelectAdapter extends BaseAdapter {
     private List<ImageBean> mList;
+    private ImageLoader mImageLoader;
     
-    public ImageSelectAdapter(List<ImageBean> list) {
+    public ImageSelectAdapter(List<ImageBean> list, ImageLoader imageLoader) {
         mList = list;
+        mImageLoader = imageLoader;
     }
+    
+    /*public ImageSelectAdapter(List<ImageBean> list) {
+        mList = list;
+    }*/
     
     public void refreshData(List<ImageBean> list) {
         mList = list;
@@ -58,7 +61,7 @@ public class ImageSelectAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-    
+        
         if (mList.get(position).isSelected) {
             viewHolder.view.setAlpha(0.5f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -70,28 +73,14 @@ public class ImageSelectAdapter extends BaseAdapter {
                 convertView.setForeground(null);
             }
         }
-    
-        if (mList.get(position).path.endsWith(".gif") || mList.get(position).path.contains(".gif")) {
-            // TODO: 11/14 gif
-            GlideApp.with(context)
-                    .load(mList.get(position).path)
-                    .placeholder(R.drawable.image_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .into(viewHolder.imageView);
-        } else {
-            GlideApp.with(context)
-                    .load(mList.get(position).path)
-                    .placeholder(R.drawable.image_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(viewHolder.imageView);
-        }
+        
+        mImageLoader.loadImage(context, mList.get(position).path, viewHolder.imageView);
         
         return convertView;
     }
     
     private static class ViewHolder {
         ImageView imageView;
-        private View view;
+        View view;
     }
 }

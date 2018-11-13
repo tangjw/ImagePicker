@@ -29,6 +29,7 @@ import androidx.appcompat.widget.ListPopupWindow;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+import cn.tangjunwei.imagelibrary.ImageLoaderImpl;
 import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.adapter.AlbumSelectAdapter;
 import cn.tangjunwei.imagelibrary.album.adapter.ImageSelectAdapter;
@@ -341,7 +342,7 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
         }
         
         if (adapter == null) {
-            adapter = new ImageSelectAdapter(mImageList);
+            adapter = new ImageSelectAdapter(mImageList,new ImageLoaderImpl());
             gridView.setAdapter(adapter);
         } else {
             adapter.refreshData(mImageList);

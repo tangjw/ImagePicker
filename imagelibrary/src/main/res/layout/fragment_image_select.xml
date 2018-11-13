@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_image_select"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="SpUsage">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black">
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/progress_bar_image_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/progressBarStyle"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:id="@+id/text_view_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/error_null_cursor"
+            android:textColor="#fff"
+            android:textSize="16dp"
+            android:visibility="gone"/>
+
+        <GridView
+            android:id="@+id/grid_view_image_select"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/rl_select_album"
+            android:numColumns="4"
+            android:padding="1dp"
+            android:stretchMode="columnWidth"
+            android:visibility="invisible"/>
+
+        <LinearLayout
+            android:id="@+id/rl_select_album"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_alignParentBottom="true"
+            android:background="#303030"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2">
+
+                <CheckBox
+                    android:id="@+id/tv_select_album"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="16dp"
+                    android:button="@null"
+                    android:drawableEnd="@drawable/selector_switch_album_icon"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/album_name_all"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="原图"
+                android:textColor="#FFF"
+                android:visibility="invisible"/>
+
+
+            <TextView
+                android:id="@+id/tv_preview"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:padding="10dp"
+                android:text="预览"
+                android:textColor="@color/colorTextGray"
+                android:textSize="16sp"
+                android:visibility="invisible"/>
+
+
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>
