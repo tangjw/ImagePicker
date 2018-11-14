@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.widget.ContentLoadingProgressBar;
 import cn.tangjunwei.imagelibrary.ImageLoader;
 import cn.tangjunwei.imagelibrary.R;
@@ -36,7 +37,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView {
     private ImageSelectAdapter mAdapter;
     private AlbumPresenter mPresenter;
     
-    public static ImageSelectFragment newInstance(@NonNull ImageLoader imageLoader) {
+    public static ImageSelectFragment newInstance(ImageLoader imageLoader) {
         
         Bundle args = new Bundle();
         args.putParcelable(ARG_PARAM1, imageLoader);
@@ -45,9 +46,14 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView {
         return fragment;
     }
     
+    public void setImageLoader(ImageLoader imageLoader) {
+        mImageLoader = imageLoader;
+    }
+    
     @Override
     protected void initArguments(@NonNull Bundle args) {
-        mImageLoader = args.getParcelable(ARG_PARAM1);
+        // mImageLoader = args.getParcelable(ARG_PARAM1);
+        // System.out.println(mImageLoader);
     }
     
     @Override
@@ -57,7 +63,13 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView {
     
     
     @Override
-    protected void init(View rootView) {
+    protected void init(View rootView, @Nullable Bundle savedInstanceState) {
+        System.out.println("init Bundle: " + savedInstanceState);
+        if (savedInstanceState != null) {
+            // mImageLoader = savedInstanceState.getParcelable(ARG_PARAM1);
+        }
+        System.out.println(this);
+        System.out.println(mImageLoader);
         mProgressBar = rootView.findViewById(R.id.progress_bar);
         mTvError = rootView.findViewById(R.id.tv_error);
         mRlContent = rootView.findViewById(R.id.rl_content);
@@ -67,33 +79,56 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView {
     }
     
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        System.out.println("onSaveInstanceState");
+        //outState.putParcelable(ARG_PARAM1, mImageLoader);
+    }
+    
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        System.out.println("onViewStateRestored");
+    }
+    
+    @Override
     public void showLoadingView() {
         mProgressBar.show();
         mTvError.setVisibility(View.GONE);
-        mRlContent.setVisibility(View.GONE);
     }
     
     @Override
     public void HideLoadingView() {
+        System.out.println("HideLoadingView");
         mRlContent.setVisibility(View.VISIBLE);
         mProgressBar.hide();
         mTvError.setVisibility(View.GONE);
     }
     
     @Override
+    public void showEmptyView() {
+        mRlContent.setVisibility(View.GONE);
+        mProgressBar.hide();
+        mTvError.setText(getText(R.string.error_empty));
+        mTvError.setVisibility(View.VISIBLE);
+    }
+    
+    @Override
     public void showErrorView() {
         mRlContent.setVisibility(View.GONE);
         mProgressBar.hide();
+        mTvError.setText(getText(R.string.error_null_cursor));
         mTvError.setVisibility(View.VISIBLE);
     }
     
     @Override
     public void showImage(List<ImageBean> list) {
+        System.out.println("showImage");
         if (mAdapter == null) {
-            System.out.println(list.size());
+            System.out.println("null");
             mAdapter = new ImageSelectAdapter(list, mImageLoader);
             mGridView.setAdapter(mAdapter);
         } else {
+            System.out.println("refreshData");
             mAdapter.refreshData(list);
         }
     }

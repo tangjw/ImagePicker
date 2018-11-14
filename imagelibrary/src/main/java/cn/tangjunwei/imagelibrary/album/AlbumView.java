@@ -17,6 +17,8 @@ public interface AlbumView {
     
     void HideLoadingView();
     
+    void showEmptyView();
+    
     void showErrorView();
     
     void showImage(List<ImageBean> list);

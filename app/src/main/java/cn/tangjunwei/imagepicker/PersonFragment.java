@@ -42,6 +42,13 @@ public class PersonFragment extends BaseFragment {
                 showSelectAvatarDialog();
             }
         });
+        MyImageLoaderImpl imageLoader = new MyImageLoaderImpl();
+//        imageLoader.loadImage(this,?);
+    
+        GlideApp.with(this)
+                .load(R.drawable.ic_arrow_back)
+                .into(iv);
+        
     }
     
     @Override

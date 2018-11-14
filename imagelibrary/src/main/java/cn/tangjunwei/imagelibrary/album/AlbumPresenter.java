@@ -48,9 +48,9 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
      */
     private ArrayList<ImageBean> mImageList;
     /**
-     * 默认 0，选中的相册是所有图片
+     * 当前选中相册的 bucket_id, 默认null是所有图片
      */
-    private int mCurrentSelectedAlbum = 0;
+    private String mCurrentSelectedAlbum;
     /**
      * 当前选中Image在当前Album所有Image集合中的位置
      */
@@ -75,7 +75,8 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
         mSelectedIdSet = new HashSet<>();
         mAlbumMap = new LinkedHashMap<>();
         mAlbumMap.put(null, new AlbumBean(null, "所有图片", null, 0, true));
-        loadAlbumImage(null);
+        mCurrentSelectedAlbum = null;
+        loadAlbumImage(mCurrentSelectedAlbum);
     }
     
     /**
@@ -87,11 +88,13 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
         Bundle args = new Bundle();
         args.putString(BUCKET_ID, albumId);
         mLoaderManager.restartLoader(0, args, this);
+    
     }
     
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        System.out.println("3333333333333333");
         CursorLoader loader;
         String albumId = args.getString(BUCKET_ID);
         if (albumId == null) {  // 加载全部
@@ -111,6 +114,7 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
     
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        System.out.println("onLoadFinished");
         if (data == null) return;
         if (!data.moveToLast()) return;
         
@@ -155,22 +159,20 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
                 break;
             }
         }
-        
-       /* // 遍历一下所有的相册
-        Set<Map.Entry<String, AlbumBean>> entries = mAlbumMap.entrySet();
-        for (Map.Entry<String, AlbumBean> entry : entries) {
-            AlbumBean albumBean = entry.getValue();
-            System.out.println(albumBean.getName() + ": " + albumBean.getCount());
-        }*/
-        
+    
         if (mAlbumMap != null && mAlbumMap.size() > 0) {
             mAlbumList = new ArrayList<>(mAlbumMap.values());
             mAlbumMap.clear();
             mAlbumMap = null;
             mAlbumView.HideLoadingView();
+        }
+    
+        if (mAlbumList != null) {
             mAlbumView.showImage(mImageList);
-        } else {
+        } else if (mCurrentSelectedAlbum == null) {
             mAlbumView.showErrorView();
+        } else {
+            mAlbumView.showEmptyView();
         }
         
     }

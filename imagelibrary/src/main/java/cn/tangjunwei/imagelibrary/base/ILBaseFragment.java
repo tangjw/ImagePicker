@@ -49,8 +49,8 @@ public abstract class ILBaseFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         
         View mRootView = inflater.inflate(getContentLayoutId(), container, false);
-        
-        init(mRootView);
+    
+        init(mRootView, savedInstanceState);
         
         return mRootView;
     }
@@ -70,7 +70,7 @@ public abstract class ILBaseFragment extends Fragment {
      * 初始化其他
      * @param rootView 填充的view
      */
-    protected void init(View rootView) {
+    protected void init(View rootView, @Nullable Bundle savedInstanceState) {
     }
     
 }

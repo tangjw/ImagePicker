@@ -20,7 +20,8 @@
     <string name="add">确定</string>
     <string name="selected">已选</string>
     <string name="limit_exceeded">最多能选 %d 张</string>
-    <string name="error_null_cursor">咦? 手机里好像没有图片唉</string>
+    <string name="error_null_cursor">咦？手机里好像没有图片唉</string>
+    <string name="error_empty">咦？图片不见了</string>
     <string name="album_name_all">所有图片</string>
     <string name="format_count">%d张</string>
 
