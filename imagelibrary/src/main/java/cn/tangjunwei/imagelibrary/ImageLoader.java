@@ -15,13 +15,7 @@ import androidx.fragment.app.FragmentActivity;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public interface ImageLoader extends Parcelable {
-//    GlideApp.with(context)
-//            .load(mList.get(position).path)
-//            .placeholder(R.drawable.image_placeholder)
-//            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-//            .transition(DrawableTransitionOptions.withCrossFade())
-//            .into(viewHolder.imageView);
+public interface ImageLoader {
     
     void loadImage(Context context, String path, ImageView imageView);
     
@@ -29,9 +23,6 @@ public interface ImageLoader extends Parcelable {
     
     void loadImage(Fragment fragment, String path, ImageView imageView);
     
-    @Override
-    int describeContents();
+    void loadCropImage(FragmentActivity activity, String path, ImageView imageView);
     
-    @Override
-    void writeToParcel(Parcel dest, int flags);
 }

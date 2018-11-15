@@ -46,7 +46,9 @@ public class PersonFragment extends BaseFragment {
 //        imageLoader.loadImage(this,?);
     
         GlideApp.with(this)
-                .load(R.drawable.ic_arrow_back)
+                .load(R.drawable.ic_avatar_placeholder)
+                .placeholder(R.drawable.ic_avatar_placeholder)
+                .error(R.drawable.ic_avatar_placeholder)
                 .into(iv);
         
     }

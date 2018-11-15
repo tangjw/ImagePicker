@@ -29,6 +29,7 @@ import androidx.appcompat.widget.ListPopupWindow;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+import cn.tangjunwei.imagelibrary.ImageLoaderImpl;
 import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.adapter.AlbumSelectAdapter;
 import cn.tangjunwei.imagelibrary.album.adapter.ImageSelectAdapter;
@@ -188,7 +189,7 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
     private void showAlbumDialog() {
         if (mListPopupWindow == null) {
             mListPopupWindow = new ListPopupWindow(this);
-            mListPopupWindow.setAnchorView(findViewById(R.id.rl_select_album));
+            mListPopupWindow.setAnchorView(findViewById(R.id.ll_select_album));
             mListPopupWindow.setWidth(ListPopupWindow.MATCH_PARENT);
             mListPopupWindow.setHeight(ListPopupWindow.WRAP_CONTENT);
             mListPopupWindow.setModal(true);
@@ -228,7 +229,7 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
         }
         
         if (mAlbumSelectAdapter == null) {
-            mAlbumSelectAdapter = new AlbumSelectAdapter(mAlbumList);
+            mAlbumSelectAdapter = new AlbumSelectAdapter(mAlbumList,new ImageLoaderImpl());
             mListPopupWindow.setAdapter(mAlbumSelectAdapter);
         } else {
             mAlbumSelectAdapter.setAlbums(mAlbumList);

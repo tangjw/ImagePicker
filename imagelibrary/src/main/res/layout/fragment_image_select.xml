@@ -17,16 +17,15 @@
 
         <GridView
             android:id="@+id/grid_view"
-            android:background="#384"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/rl_select_album"
+            android:layout_above="@+id/ll_select_album"
             android:numColumns="4"
             android:padding="1dp"
             android:stretchMode="columnWidth"/>
 
         <LinearLayout
-            android:id="@+id/rl_select_album"
+            android:id="@+id/ll_select_album"
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_alignParentBottom="true"

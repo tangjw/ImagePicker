@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -14,9 +15,9 @@ import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
 
@@ -26,8 +27,7 @@ import androidx.appcompat.widget.AppCompatImageView;
  * @author zhy
  */
 public class ClipZoomImageView extends AppCompatImageView implements
-        OnScaleGestureListener, OnTouchListener,
-        ViewTreeObserver.OnGlobalLayoutListener {
+        OnScaleGestureListener, OnTouchListener{
     
     public static float SCALE_MAX = 4.0f;
     private static float SCALE_MID = 2.0f;
@@ -231,49 +231,11 @@ public class ClipZoomImageView extends AppCompatImageView implements
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
     
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        getViewTreeObserver().removeOnGlobalLayoutListener(this);
-    }
-    
-    @Override
-    public void onGlobalLayout() {
-        
-        Drawable d = getDrawable();
-        if (once && d != null) {
-            // ImageView的宽和高
-            int width = getWidth();
-            int height = getHeight();
-            
-            // 垂直方向的边距
-            mVerticalPadding = (height - (width - 2 * mHorizontalPadding)) / 2;
-            
-            // 拿到图片的宽和高
-            int dw = d.getIntrinsicWidth();
-            int dh = d.getIntrinsicHeight();
-            
-            float scale;
-            if (dw <= dh) { // 图片竖长, 则宽撑满裁剪框
-                scale = (width * 1.0f - mHorizontalPadding * 2) / dw;
-            } else {        // 图片横宽, 则高撑满裁剪框
-                scale = (width * 1.0f - mHorizontalPadding * 2) / dh;
-            }
-            
-            mScaleMatrix.postTranslate(-Math.abs(width - dw) / 2, Math.abs(height - dh) / 2);
-            mScaleMatrix.postScale(scale, scale, width / 2, height / 2);
-            initScale = scale;
-            SCALE_MID = initScale * 2;
-            SCALE_MAX = initScale * 6;
-            
-            setImageMatrix(mScaleMatrix);
-            
-            once = false;
-        }
-        
     }
     
     /**
@@ -427,5 +389,50 @@ public class ClipZoomImageView extends AppCompatImageView implements
             
         }
     }
+    
+    @Override
+    public void setImageDrawable(@Nullable Drawable drawable) {
+        super.setImageDrawable(drawable);
+        System.out.println("setImageDrawable");
+        Drawable d = getDrawable();
+        
+        if (d != null) {
+            // ImageView的宽和高
+            int width = getWidth();
+            int height = getHeight();
+            if (width<=0||height<=0)return;
+            System.out.println("ImageView width: " + width);
+            System.out.println("ImageView height: " + height);
+            
+            // 垂直方向的边距
+            mVerticalPadding = (height - (width - 2 * mHorizontalPadding)) / 2;
+            
+            // 拿到图片的宽和高
+            int dw = d.getIntrinsicWidth();
+            int dh = d.getIntrinsicHeight();
+            
+            System.out.println("ImageView dw: " + dw);
+            System.out.println("ImageView dh: " + dh);
+            
+            float scale;
+            if (dw <= dh) { // 图片竖长, 则宽撑满裁剪框
+                scale = (width * 1.0f - mHorizontalPadding * 2) / dw;
+            } else {        // 图片横宽, 则高撑满裁剪框
+                scale = (width * 1.0f - mHorizontalPadding * 2) / dh;
+            }
+            
+            initScale = scale;
+            SCALE_MID = initScale * 2;
+            SCALE_MAX = initScale * 6;
+           
+            mScaleMatrix.postTranslate(-Math.abs(width - dw) / 2, Math.abs(height - dh) / 2);
+            mScaleMatrix.postScale(scale, scale, width / 2, height / 2);
+            setImageMatrix(mScaleMatrix);
+            
+        }
+        
+        
+    }
+    
     
 }

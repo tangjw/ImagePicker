@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
@@ -39,13 +40,26 @@ public class MyImageLoaderImpl extends ImageLoaderImpl {
         loadImage(GlideApp.with(fragment), path, imageView);
     }
     
+    @Override
+    public void loadCropImage(FragmentActivity activity, String path, ImageView imageView) {
+        GlideApp.with(activity)
+                .load(path)
+                //.placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.image_placeholder_error)
+                //.thumbnail(0.1f)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .listener(new MyImageRequestListener())
+                .into(imageView);
+    }
     
     private void loadImage(GlideRequests glideRequests, String path, ImageView imageView) {
-        System.out.println("===============");
         glideRequests
                 .load(path)
-                //.placeholder(cn.tangjunwei.imagelibrary.R.drawable.image_placeholder)
-                //.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+               .placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.image_placeholder_error)
+                //.thumbnail(0.1f)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .listener(new MyImageRequestListener())
                 .into(imageView);
@@ -56,17 +70,17 @@ public class MyImageLoaderImpl extends ImageLoaderImpl {
         
         @Override
         public boolean onLoadFailed(GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-            System.out.println("onResourceReady isFirstResource: " + isFirstResource);
-            System.out.println(e.getMessage());
+            //System.out.println("onResourceReady isFirstResource: " + isFirstResource);
+            //System.out.println(e.getMessage());
             return false;
         }
         
         @Override
         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-            System.out.println("onResourceReady isFirstResource: " + isFirstResource);
-            System.out.println(dataSource);
-            target.onResourceReady(resource, new DrawableCrossFadeTransition(1000, isFirstResource));
-            return true;
+            //System.out.println("onResourceReady isFirstResource: " + isFirstResource);
+           // System.out.println(dataSource);
+           // target.onResourceReady(resource, new DrawableCrossFadeTransition(1000, isFirstResource));
+            return false;
         }
     }
 }

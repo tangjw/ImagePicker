@@ -16,24 +16,9 @@ import androidx.fragment.app.FragmentActivity;
  */
 public class ImageLoaderImpl implements ImageLoader {
     
-    public static final Creator<ImageLoaderImpl> CREATOR = new Creator<ImageLoaderImpl>() {
-        @Override
-        public ImageLoaderImpl createFromParcel(Parcel source) {
-            return new ImageLoaderImpl();
-        }
-        
-        @Override
-        public ImageLoaderImpl[] newArray(int size) {
-            return new ImageLoaderImpl[size];
-        }
-    };
-    
-    public ImageLoaderImpl() {
-    }
-    
     @Override
     public void loadImage(Context context, String path, ImageView imageView) {
-    
+        
     }
     
     @Override
@@ -43,15 +28,12 @@ public class ImageLoaderImpl implements ImageLoader {
     
     @Override
     public void loadImage(Fragment fragment, String path, ImageView imageView) {
-    
+        
     }
     
     @Override
-    public int describeContents() {
-        return 0;
+    public void loadCropImage(FragmentActivity activity, String path, ImageView imageView) {
+        
     }
     
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-    }
 }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import cn.tangjunwei.imagelibrary.ImageLoader;
 import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.bean.AlbumBean;
 
@@ -20,26 +21,28 @@ import cn.tangjunwei.imagelibrary.album.bean.AlbumBean;
 
 public class AlbumSelectAdapter extends BaseAdapter {
     
-    private List<AlbumBean> albums;
+    private List<AlbumBean> mList;
+    private ImageLoader mImageLoader;
     
-    public AlbumSelectAdapter(List<AlbumBean> albums) {
-        this.albums = albums;
+    public AlbumSelectAdapter(List<AlbumBean> albums, ImageLoader imageLoader) {
+        mList = albums;
+        mImageLoader = imageLoader;
     }
     
     
     public void setAlbums(List<AlbumBean> albums) {
-        this.albums = albums;
+        mList = albums;
         notifyDataSetChanged();
     }
     
     @Override
     public int getCount() {
-        return albums.size();
+        return mList.size();
     }
     
     @Override
     public AlbumBean getItem(int position) {
-        return albums.get(position);
+        return mList.get(position);
     }
     
     @Override
@@ -67,25 +70,11 @@ public class AlbumSelectAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         
+        viewHolder.textView.setText(mList.get(position).getName());
+        viewHolder.textView1.setText(String.format(parent.getContext().getString(R.string.format_count), mList.get(position).getCount()));
+        viewHolder.radioButton.setChecked(mList.get(position).isSelected());
         
-        viewHolder.textView.setText(albums.get(position).getName());
-        viewHolder.textView1.setText(String.format(parent.getContext().getString(R.string.format_count), albums.get(position).getCount()));
-        viewHolder.radioButton.setChecked(albums.get(position).isSelected());
-        
-        if (albums.get(position).getCover().endsWith(".gif") || albums.get(position).getCover().contains(".gif")) {
-            // TODO: 11/14 gif
-            /*GlideApp.with(parent.getContext())
-                    .load(albums.get(position).getCover())
-                    .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .into(viewHolder.imageView);*/
-        } else {
-           /* GlideApp.with(parent.getContext())
-                    .load(albums.get(position).getCover())
-                    .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .into(viewHolder.imageView);*/
-        }
+        mImageLoader.loadImage(parent.getContext(), mList.get(position).getCover(), viewHolder.imageView);
         
         return convertView;
     }

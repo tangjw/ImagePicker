@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.fragment.ImageSelectFragment;
 
 public class TestActivity extends AppCompatActivity {
@@ -20,7 +19,7 @@ public class TestActivity extends AppCompatActivity {
         if (fragment == null) {
             MyImageLoaderImpl imageLoader = new MyImageLoaderImpl();
             System.out.println(imageLoader);
-            fragment = ImageSelectFragment.newInstance(null);
+            fragment = ImageSelectFragment.newInstance();
         }
         fragment.setImageLoader(new MyImageLoaderImpl());
         fragmentManager.beginTransaction()

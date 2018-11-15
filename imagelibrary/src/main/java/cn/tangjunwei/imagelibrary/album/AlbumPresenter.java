@@ -9,6 +9,7 @@ import android.util.LongSparseArray;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,7 +47,7 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * 相册数组
      */
-    private ArrayList<ImageBean> mImageList;
+    private List<ImageBean> mImageList;
     /**
      * 当前选中相册的 bucket_id, 默认null是所有图片
      */
@@ -59,7 +60,7 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
      * 全局选中的Image id 集合
      */
     private HashSet<Long> mSelectedIdSet;
-    private ArrayList<AlbumBean> mAlbumList;
+    private List<AlbumBean> mAlbumList;
     
     public AlbumPresenter(AlbumView albumView) {
         mAlbumView = albumView;
@@ -94,7 +95,6 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        System.out.println("3333333333333333");
         CursorLoader loader;
         String albumId = args.getString(BUCKET_ID);
         if (albumId == null) {  // 加载全部
@@ -114,7 +114,6 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
     
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        System.out.println("onLoadFinished");
         if (data == null) return;
         if (!data.moveToLast()) return;
         
@@ -162,6 +161,7 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
     
         if (mAlbumMap != null && mAlbumMap.size() > 0) {
             mAlbumList = new ArrayList<>(mAlbumMap.values());
+            mAlbumView.showAlbum(mAlbumList);
             mAlbumMap.clear();
             mAlbumMap = null;
             mAlbumView.HideLoadingView();

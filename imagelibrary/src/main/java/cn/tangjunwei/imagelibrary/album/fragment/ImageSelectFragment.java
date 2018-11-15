@@ -1,8 +1,15 @@
 package cn.tangjunwei.imagelibrary.album.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -10,14 +17,19 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.widget.ContentLoadingProgressBar;
 import cn.tangjunwei.imagelibrary.ImageLoader;
 import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.AlbumPresenter;
 import cn.tangjunwei.imagelibrary.album.AlbumView;
+import cn.tangjunwei.imagelibrary.album.activity.ImageSelectActivity;
+import cn.tangjunwei.imagelibrary.album.adapter.AlbumSelectAdapter;
 import cn.tangjunwei.imagelibrary.album.adapter.ImageSelectAdapter;
+import cn.tangjunwei.imagelibrary.album.bean.AlbumBean;
 import cn.tangjunwei.imagelibrary.album.bean.ImageBean;
 import cn.tangjunwei.imagelibrary.base.ILBaseFragment;
+import cn.tangjunwei.imagelibrary.crop.CropActivity;
 
 /**
  * desc
@@ -29,6 +41,7 @@ import cn.tangjunwei.imagelibrary.base.ILBaseFragment;
 public class ImageSelectFragment extends ILBaseFragment implements AlbumView {
     
     private final static String ARG_PARAM1 = "ImageLoader";
+    
     private ContentLoadingProgressBar mProgressBar;
     private ImageLoader mImageLoader;
     private TextView mTvError;
@@ -36,11 +49,18 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView {
     private GridView mGridView;
     private ImageSelectAdapter mAdapter;
     private AlbumPresenter mPresenter;
+    private CheckBox mTvSelectAlbum;
+    private LinearLayout mLlSelectAlbum;
+    private ListPopupWindow mListPopupWindow;
+    private List<AlbumBean> mAlbumList;
+    private AlbumSelectAdapter mAlbumSelectAdapter;
+    private int mCurAlbumIndex = 0;
+    private List<ImageBean> mList;
     
-    public static ImageSelectFragment newInstance(ImageLoader imageLoader) {
+    
+    public static ImageSelectFragment newInstance() {
         
         Bundle args = new Bundle();
-        args.putParcelable(ARG_PARAM1, imageLoader);
         ImageSelectFragment fragment = new ImageSelectFragment();
         fragment.setArguments(args);
         return fragment;
@@ -52,8 +72,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView {
     
     @Override
     protected void initArguments(@NonNull Bundle args) {
-        // mImageLoader = args.getParcelable(ARG_PARAM1);
-        // System.out.println(mImageLoader);
+        
     }
     
     @Override
@@ -64,30 +83,53 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView {
     
     @Override
     protected void init(View rootView, @Nullable Bundle savedInstanceState) {
-        System.out.println("init Bundle: " + savedInstanceState);
-        if (savedInstanceState != null) {
-            // mImageLoader = savedInstanceState.getParcelable(ARG_PARAM1);
-        }
-        System.out.println(this);
-        System.out.println(mImageLoader);
+        
         mProgressBar = rootView.findViewById(R.id.progress_bar);
         mTvError = rootView.findViewById(R.id.tv_error);
         mRlContent = rootView.findViewById(R.id.rl_content);
         mGridView = rootView.findViewById(R.id.grid_view);
+        mLlSelectAlbum = rootView.findViewById(R.id.ll_select_album);
+        mTvSelectAlbum = rootView.findViewById(R.id.tv_select_album);
         mPresenter = new AlbumPresenter(this);
+        
         mPresenter.loadAllImage(mActivity);
+        
+        mTvSelectAlbum.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    showAlbumDialog();
+                }
+            }
+        });
+        
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //toggleSelection(position);
+                // 打开头像剪切界面
+                String path = mList.get(position).path;
+                System.out.println(path);
+                /*Intent intent = new Intent(mActivity, CropActivity.class);
+                intent.putExtra("path", path);
+                startActivity(intent);*/
+                if (getFragmentManager() != null) {
+                    CropDialogFragment fragment = CropDialogFragment.newInstance(path);
+                    fragment.setImageLoader(mImageLoader);
+                    fragment.show(getFragmentManager(), "crop");
+                }
+            }
+        });
     }
     
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        System.out.println("onSaveInstanceState");
-        //outState.putParcelable(ARG_PARAM1, mImageLoader);
+        //outState.putInt("current", mCurAlbumIndex);
     }
     
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        System.out.println("onViewStateRestored");
     }
     
     @Override
@@ -98,7 +140,6 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView {
     
     @Override
     public void HideLoadingView() {
-        System.out.println("HideLoadingView");
         mRlContent.setVisibility(View.VISIBLE);
         mProgressBar.hide();
         mTvError.setVisibility(View.GONE);
@@ -121,15 +162,85 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView {
     }
     
     @Override
+    public void showAlbum(List<AlbumBean> list) {
+        mAlbumList = list;
+    }
+    
+    @Override
     public void showImage(List<ImageBean> list) {
-        System.out.println("showImage");
+        mList = list;
         if (mAdapter == null) {
-            System.out.println("null");
             mAdapter = new ImageSelectAdapter(list, mImageLoader);
             mGridView.setAdapter(mAdapter);
         } else {
-            System.out.println("refreshData");
             mAdapter.refreshData(list);
         }
+    }
+    
+    /**
+     * 显示相册选择 dialog
+     */
+    private void showAlbumDialog() {
+        if (mListPopupWindow == null) {
+            mListPopupWindow = new ListPopupWindow(mActivity);
+            mListPopupWindow.setAnchorView(mLlSelectAlbum);
+            mListPopupWindow.setWidth(ListPopupWindow.MATCH_PARENT);
+            mListPopupWindow.setHeight(ListPopupWindow.WRAP_CONTENT);
+            mListPopupWindow.setModal(true);
+            if (mAlbumList.size() * dip2px(120) > getScreenHeight()) {
+                mListPopupWindow.setHeight((int) (getScreenHeight() * 0.7));
+            }
+            mListPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    mTvSelectAlbum.setChecked(false);
+                }
+            });
+            
+            mListPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    
+                    if (mCurAlbumIndex == position) {
+                        mListPopupWindow.dismiss();
+                        return;
+                    }
+                    // 先取消选中原来所选的相册
+                    mAlbumList.get(mCurAlbumIndex).setSelected(false);
+                    // 选中现在所选的相册
+                    AlbumBean albumBean = mAlbumList.get(position);
+                    albumBean.setSelected(true);
+                    mTvSelectAlbum.setText(albumBean.getName());
+                    mAlbumSelectAdapter.notifyDataSetChanged();
+                    mListPopupWindow.dismiss();
+                    
+                    mCurAlbumIndex = position;
+                    
+                    mPresenter.loadAlbumImage(albumBean.getId());
+                }
+            });
+            
+        }
+        
+        if (mAlbumSelectAdapter == null) {
+            mAlbumSelectAdapter = new AlbumSelectAdapter(mAlbumList, mImageLoader);
+            mListPopupWindow.setAdapter(mAlbumSelectAdapter);
+        } else {
+            mAlbumSelectAdapter.setAlbums(mAlbumList);
+        }
+        
+        mListPopupWindow.show();
+    }
+    
+    private int dip2px(float dp) {
+        final float density = getResources().getDisplayMetrics().density;
+        return (int) (dp * density + 0.5f);
+    }
+    
+    private int getScreenHeight() {
+        DisplayMetrics dm = new DisplayMetrics();
+        mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        
+        return dm.heightPixels;
     }
 }

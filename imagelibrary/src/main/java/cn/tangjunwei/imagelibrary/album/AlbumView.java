@@ -2,6 +2,7 @@ package cn.tangjunwei.imagelibrary.album;
 
 import java.util.List;
 
+import cn.tangjunwei.imagelibrary.album.bean.AlbumBean;
 import cn.tangjunwei.imagelibrary.album.bean.ImageBean;
 
 /**
@@ -20,6 +21,8 @@ public interface AlbumView {
     void showEmptyView();
     
     void showErrorView();
+    
+    void showAlbum(List<AlbumBean> list);
     
     void showImage(List<ImageBean> list);
     
