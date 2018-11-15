@@ -27,7 +27,7 @@ import androidx.appcompat.widget.AppCompatImageView;
  * @author zhy
  */
 public class ClipZoomImageView extends AppCompatImageView implements
-        OnScaleGestureListener, OnTouchListener{
+        OnScaleGestureListener, OnTouchListener {
     
     public static float SCALE_MAX = 4.0f;
     private static float SCALE_MID = 2.0f;
@@ -396,7 +396,6 @@ public class ClipZoomImageView extends AppCompatImageView implements
         System.out.println("setImageDrawable");
         scaleImage();
         
-        
     }
     
     @Override
@@ -417,7 +416,7 @@ public class ClipZoomImageView extends AppCompatImageView implements
             // ImageView的宽和高
             int width = getWidth();
             int height = getHeight();
-            if (width<=0||height<=0)return;
+            if (width <= 0 || height <= 0) return;
             System.out.println("ImageView width: " + width);
             System.out.println("ImageView height: " + height);
             
@@ -441,7 +440,7 @@ public class ClipZoomImageView extends AppCompatImageView implements
             initScale = scale;
             SCALE_MID = initScale * 2;
             SCALE_MAX = initScale * 6;
-           
+            
             mScaleMatrix.postTranslate(-Math.abs(width - dw) / 2, Math.abs(height - dh) / 2);
             mScaleMatrix.postScale(scale, scale, width / 2, height / 2);
             setImageMatrix(mScaleMatrix);

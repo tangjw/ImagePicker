@@ -69,7 +69,7 @@ public class CropDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BrowsePicTheme);
-        
+        //getDialog().getWindow().
         Bundle arguments = getArguments();
         if (arguments != null) {
             mPath = arguments.getString("path");
@@ -82,7 +82,9 @@ public class CropDialogFragment extends DialogFragment {
         super.onActivityCreated(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //mActivity.getWindow().
-            mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            Window window = getDialog().getWindow();
+            if (window==null)return;
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
     }
     
@@ -112,10 +114,10 @@ public class CropDialogFragment extends DialogFragment {
     
     @Override
     public void onDismiss(DialogInterface dialog) {
-        System.out.println("onDetach");
+        /*System.out.println("onDetach");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+        }*/
         super.onDismiss(dialog);
     }
     

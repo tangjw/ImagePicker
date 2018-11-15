@@ -56,7 +56,7 @@ public class MyImageLoaderImpl extends ImageLoaderImpl {
     private void loadImage(GlideRequests glideRequests, String path, ImageView imageView) {
         glideRequests
                 .load(path)
-               .placeholder(R.drawable.image_placeholder)
+                //.placeholder(R.drawable.image_placeholder)
                 .error(R.drawable.image_placeholder_error)
                 //.thumbnail(0.1f)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
