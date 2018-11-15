@@ -1,9 +1,6 @@
 package cn.tangjunwei.imagelibrary.album.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -76,15 +73,15 @@ public class CropDialogFragment extends DialogFragment {
         }
     }
     
-    
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //mActivity.getWindow().
             Window window = getDialog().getWindow();
-            if (window==null)return;
+            if (window == null) return;
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            //window.getAttributes().windowAnimations = R.style.DialogAnimation;
         }
     }
     
@@ -111,15 +108,5 @@ public class CropDialogFragment extends DialogFragment {
         
         return inflate;
     }
-    
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        /*System.out.println("onDetach");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }*/
-        super.onDismiss(dialog);
-    }
-    
     
 }

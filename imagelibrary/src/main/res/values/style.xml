@@ -17,6 +17,8 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="colorPrimaryDark">#0000</item>
         <item name="android:windowIsFloating">false</item>
+        <!--@style/Animation.AppCompat.DropDownUp-->
+        <item name="android:windowAnimationStyle">@android:style/Animation.InputMethod</item>
 
     </style>
 
