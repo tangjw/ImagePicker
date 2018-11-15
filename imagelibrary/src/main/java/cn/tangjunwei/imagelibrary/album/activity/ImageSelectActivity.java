@@ -147,7 +147,6 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
                 //toggleSelection(position);
                 // 打开头像剪切界面
                 String path = mImageList.get(position).path;
-                System.out.println(path);
                 Intent intent = new Intent(ImageSelectActivity.this, CropActivity.class);
                 intent.putExtra("path", path);
                 startActivity(intent);
@@ -328,12 +327,6 @@ public class ImageSelectActivity extends AppCompatActivity implements LoaderMana
             }
         }
         
-        /*Set<Map.Entry<Long, AlbumBean>> entries = mAlbumMap.entrySet();
-    
-        for (Map.Entry<Long, AlbumBean> entry : entries) {
-            AlbumBean albumBean = entry.getValue();
-            System.out.println(albumBean.getName() + ": " + albumBean.getCount());
-        }*/
         
         if (mAlbumMap != null && mAlbumMap.size() > 0) {
             mAlbumList = new ArrayList<>(mAlbumMap.values());

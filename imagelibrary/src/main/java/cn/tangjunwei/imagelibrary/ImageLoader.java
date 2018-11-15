@@ -25,4 +25,6 @@ public interface ImageLoader {
     
     void loadCropImage(FragmentActivity activity, String path, ImageView imageView);
     
+    void loadCropImage(Fragment fragment, String path, ImageView imageView);
+    
 }

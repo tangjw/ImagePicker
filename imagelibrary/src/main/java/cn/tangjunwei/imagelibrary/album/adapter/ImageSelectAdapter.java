@@ -73,8 +73,9 @@ public class ImageSelectAdapter extends BaseAdapter {
                 convertView.setForeground(null);
             }
         }
-        //System.out.println(mList.get(position).path);
-        mImageLoader.loadImage(context, mList.get(position).path, viewHolder.imageView);
+        if (mImageLoader != null) {
+            mImageLoader.loadImage(context, mList.get(position).path, viewHolder.imageView);
+        }
         
         return convertView;
     }

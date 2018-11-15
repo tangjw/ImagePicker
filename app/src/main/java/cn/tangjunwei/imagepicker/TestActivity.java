@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import cn.tangjunwei.imagelibrary.album.fragment.ImageSelectFragment;
 
-public class TestActivity extends AppCompatActivity {
+public class TestActivity extends AppCompatActivity implements ImageSelectFragment.OnSelectImageListener {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,9 +19,10 @@ public class TestActivity extends AppCompatActivity {
         if (fragment == null) {
             MyImageLoaderImpl imageLoader = new MyImageLoaderImpl();
             System.out.println(imageLoader);
-            fragment = ImageSelectFragment.newInstance();
+            fragment = ImageSelectFragment.newInstance(null);
         }
         fragment.setImageLoader(new MyImageLoaderImpl());
+        fragment.setOnSelectImageListener(this);
         fragmentManager.beginTransaction()
                 .replace(R.id.fl_container, fragment, "test")
                 .commit();
@@ -38,5 +39,20 @@ public class TestActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         System.out.println("activity onRestoreInstanceState");
+    }
+    
+    @Override
+    public void onSelectAvatarSuccess(String avatarPath) {
+        System.out.println("onSelectAvatarSuccess: "+ avatarPath);
+    }
+    
+    @Override
+    public void onSelectImageSuccess(String[] imagePaths) {
+        
+    }
+    
+    @Override
+    public void onSelectError(String message) {
+        
     }
 }

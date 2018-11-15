@@ -393,32 +393,18 @@ public class ClipZoomImageView extends AppCompatImageView implements
     @Override
     public void setImageDrawable(@Nullable Drawable drawable) {
         super.setImageDrawable(drawable);
-        System.out.println("setImageDrawable");
         scaleImage();
         
-    }
-    
-    @Override
-    public void setImageBitmap(Bitmap bm) {
-        super.setImageBitmap(bm);
-    }
-    
-    @Override
-    public void setImageResource(int resId) {
-        super.setImageResource(resId);
     }
     
     private void scaleImage() {
         Drawable d = getDrawable();
         
         if (d != null) {
-            System.out.println("getDrawable() != null");
             // ImageView的宽和高
             int width = getWidth();
             int height = getHeight();
             if (width <= 0 || height <= 0) return;
-            System.out.println("ImageView width: " + width);
-            System.out.println("ImageView height: " + height);
             
             // 垂直方向的边距
             mVerticalPadding = (height - (width - 2 * mHorizontalPadding)) / 2;
@@ -426,9 +412,6 @@ public class ClipZoomImageView extends AppCompatImageView implements
             // 拿到图片的宽和高
             int dw = d.getIntrinsicWidth();
             int dh = d.getIntrinsicHeight();
-            
-            System.out.println("ImageView dw: " + dw);
-            System.out.println("ImageView dh: " + dh);
             
             float scale;
             if (dw <= dh) { // 图片竖长, 则宽撑满裁剪框

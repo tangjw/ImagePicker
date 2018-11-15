@@ -61,14 +61,12 @@ public class ClipBorderView extends View {
     
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        System.out.println("onDraw");
-        
         // 计算矩形区域的宽度
         int width = getWidth() - 2 * mHorizontalPadding;
         // 计算距离屏幕垂直边界 的边距
         int verticalPadding = (getHeight() - width) / 2;
-        int saveLayer = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG);
+        canvas.save();
+        canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG);
         canvas.drawRect(0, 0, getWidth(), getHeight(), mPaint);
         mPaint.setXfermode(mXfermode);
         canvas.drawRect(
@@ -77,17 +75,13 @@ public class ClipBorderView extends View {
                 getWidth() - mHorizontalPadding,
                 getHeight() - verticalPadding, mPaint);
         mPaint.setXfermode(null);
-        
-       
         canvas.drawRect(
                 mHorizontalPadding,
                 verticalPadding,
                 getWidth() - mHorizontalPadding,
                 getHeight() - verticalPadding, mPaintBorder);
-    
-        canvas.restoreToCount(saveLayer);
-    
-    
+        //canvas.restoreToCount(saveLayer);
+        canvas.restore();
     }
     
     public void setHorizontalPadding(int padding) {

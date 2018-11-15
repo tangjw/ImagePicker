@@ -36,4 +36,9 @@ public class ImageLoaderImpl implements ImageLoader {
         
     }
     
+    @Override
+    public void loadCropImage(Fragment fragment, String path, ImageView imageView) {
+        
+    }
+    
 }

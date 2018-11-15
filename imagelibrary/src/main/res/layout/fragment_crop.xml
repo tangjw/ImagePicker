@@ -10,7 +10,7 @@
         android:id="@+id/clipimagelayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:padding_horizontal="20dp">
+        app:padding_horizontal="30dp">
 
     </cn.tangjunwei.imagelibrary.crop.ClipImageLayout>
 
@@ -27,7 +27,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-           
             android:text="取消"
             android:textColor="@android:color/white"
             android:textSize="18sp"/>
@@ -38,7 +37,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-           
             android:text="保存"
             android:textColor="#51aa38"
             android:textSize="18sp"/>
