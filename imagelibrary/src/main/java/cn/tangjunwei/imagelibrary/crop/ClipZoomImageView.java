@@ -394,9 +394,26 @@ public class ClipZoomImageView extends AppCompatImageView implements
     public void setImageDrawable(@Nullable Drawable drawable) {
         super.setImageDrawable(drawable);
         System.out.println("setImageDrawable");
+        scaleImage();
+        
+        
+    }
+    
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        super.setImageBitmap(bm);
+    }
+    
+    @Override
+    public void setImageResource(int resId) {
+        super.setImageResource(resId);
+    }
+    
+    private void scaleImage() {
         Drawable d = getDrawable();
         
         if (d != null) {
+            System.out.println("getDrawable() != null");
             // ImageView的宽和高
             int width = getWidth();
             int height = getHeight();
@@ -430,8 +447,6 @@ public class ClipZoomImageView extends AppCompatImageView implements
             setImageMatrix(mScaleMatrix);
             
         }
-        
-        
     }
     
     
