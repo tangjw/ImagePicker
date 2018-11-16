@@ -32,7 +32,6 @@ public class RatioFrameLayout extends FrameLayout {
         mRatio =
                 typedArray.getFloat(R.styleable.RatioFrameLayout_ratio_width, 0f)
                         / typedArray.getFloat(R.styleable.RatioFrameLayout_ratio_height, 0f);
-        
         typedArray.recycle();
     }
     

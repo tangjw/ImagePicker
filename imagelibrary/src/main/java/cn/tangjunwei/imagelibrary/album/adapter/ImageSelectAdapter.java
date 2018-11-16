@@ -65,7 +65,7 @@ public class ImageSelectAdapter extends BaseAdapter {
         if (mList.get(position).isSelected) {
             viewHolder.view.setAlpha(0.5f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                convertView.setForeground(context.getDrawable(R.drawable.ic_done_white));
+                // convertView.setForeground(context.getDrawable(R.drawable.ic_done_white));
             }
         } else {
             viewHolder.view.setAlpha(0.0f);

@@ -10,11 +10,10 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.DrawableCrossFadeTransition;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import cn.tangjunwei.imagelibrary.ImageLoaderImpl;
+import cn.tangjunwei.imagelibrary.ImageLoader;
 
 /**
  * desc
@@ -23,7 +22,8 @@ import cn.tangjunwei.imagelibrary.ImageLoaderImpl;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public class MyImageLoaderImpl extends ImageLoaderImpl {
+public class MyImageLoaderImpl implements ImageLoader {
+    
     @Override
     public void loadImage(Context context, String path, ImageView imageView) {
         loadImage(GlideApp.with(context), path, imageView);
@@ -53,7 +53,7 @@ public class MyImageLoaderImpl extends ImageLoaderImpl {
     private void loadCropImage(GlideRequests glideRequests, String path, ImageView imageView){
         glideRequests
                 .load(path)
-                //.placeholder(R.drawable.image_placeholder)
+                //.placeholder(R.drawable.b8x)
                 .error(R.drawable.image_placeholder_error)
                 //.thumbnail(0.1f)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
@@ -65,7 +65,7 @@ public class MyImageLoaderImpl extends ImageLoaderImpl {
     private void loadImage(GlideRequests glideRequests, String path, ImageView imageView) {
         glideRequests
                 .load(path)
-                .placeholder(R.drawable.image_placeholder)
+                //.placeholder(R.drawable.image_placeholder)
                 .error(R.drawable.image_placeholder_error)
                 //.thumbnail(0.1f)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)

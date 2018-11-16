@@ -13,15 +13,6 @@
                 android:resource="@xml/file_paths"/>
         </provider>
 
-        <activity
-            android:name=".album.activity.ImageSelectActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
-        <activity
-            android:name=".crop.CropActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-
     </application>
 
 </manifest>

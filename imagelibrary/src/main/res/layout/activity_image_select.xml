@@ -5,19 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/ll_toobar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#303030"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/ic_arrow_back_black_24dp"/>
-    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progress_bar_image_select"
@@ -37,7 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_select_album"
-        android:layout_below="@+id/ll_toobar"
         android:background="#000"
         android:numColumns="4"
         android:padding="1dp"
@@ -88,7 +74,7 @@
             android:layout_height="40dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="2"
-            android:gravity="right"
+            android:gravity="end"
             android:padding="10dp"
             android:text="预览"
             android:textColor="@color/colorTextGray"

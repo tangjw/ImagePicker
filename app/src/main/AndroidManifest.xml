@@ -23,6 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".PersonInfoActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
         <activity
             android:name=".TestActivity"
             android:screenOrientation="portrait">

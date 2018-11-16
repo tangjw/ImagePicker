@@ -222,13 +222,11 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Cr
                     // 选中现在所选的相册
                     AlbumBean albumBean = mAlbumList.get(position);
                     albumBean.setSelected(true);
-                    mTvSelectAlbum.setText(albumBean.getName());
                     mAlbumSelectAdapter.notifyDataSetChanged();
-                    mListPopupWindow.dismiss();
-                    
+                    mTvSelectAlbum.setText(albumBean.getName());
                     mCurAlbumIndex = position;
-                    
                     mPresenter.loadAlbumImage(albumBean.getId());
+                    mListPopupWindow.dismiss();
                 }
             });
             
@@ -258,7 +256,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Cr
     
     @Override
     public void onCropSuccess(String avatarPath) {
-        if (mOnSelectImageListener!=null){
+        if (mOnSelectImageListener != null) {
             mOnSelectImageListener.onSelectAvatarSuccess(avatarPath);
         }
     }
