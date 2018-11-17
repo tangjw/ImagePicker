@@ -22,23 +22,21 @@
         android:paddingRight="15dp">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:onClick="cancel"
             android:text="取消"
             android:textColor="@android:color/white"
             android:textSize="18sp"/>
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:onClick="save"
             android:text="保存"
             android:textColor="#51aa38"
             android:textSize="18sp"/>

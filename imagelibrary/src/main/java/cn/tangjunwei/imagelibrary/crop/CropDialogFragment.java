@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +21,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import cn.tangjunwei.imagelibrary.ImageLoader;
 import cn.tangjunwei.imagelibrary.R;
+import cn.tangjunwei.imagelibrary.core.ImagePicker;
+import cn.tangjunwei.imagelibrary.core.Picker;
 
 /**
  * desc
@@ -33,20 +34,12 @@ import cn.tangjunwei.imagelibrary.R;
 public class CropDialogFragment extends DialogFragment {
     
     private String mPath;
-    private ClipImageLayout mClipImageLayout;
-    private ClipBorderView mClipImageView;
-    private ClipZoomImageView mZoomImageView;
-    
-    private ImageLoader mImageLoader;
     private int mCropSize;
-    private String mAvatarPath;
     
-    public void setImageLoader(ImageLoader imageLoader) {
-        mImageLoader = imageLoader;
-    }
+    private ClipImageLayout mClipImageLayout;
+    
     
     public static CropDialogFragment newInstance(String path, int cropSize) {
-        
         Bundle args = new Bundle();
         args.putString("path", path);
         args.putInt("cropSize", cropSize);
@@ -55,7 +48,7 @@ public class CropDialogFragment extends DialogFragment {
         return fragment;
     }
     
-    protected FragmentActivity mActivity;
+    private FragmentActivity mActivity;
     
     @Override
     public void onAttach(Context context) {
@@ -71,9 +64,7 @@ public class CropDialogFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BrowsePicTheme);
-        //getDialog().getWindow().
         Bundle arguments = getArguments();
         if (arguments != null) {
             mPath = arguments.getString("path");
@@ -85,55 +76,62 @@ public class CropDialogFragment extends DialogFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            //mActivity.getWindow().
             Window window = getDialog().getWindow();
             if (window == null) return;
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //window.getAttributes().windowAnimations = R.style.DialogAnimation;
         }
     }
+    
+    private Picker.OnImageSelectListener mOnImageSelectListener;
     
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (mOnImageSelectListener == null) {
+            dismiss();
+        }
         View inflate = inflater.inflate(R.layout.fragment_crop, container, false);
-        
         mClipImageLayout = inflate.findViewById(R.id.clipimagelayout);
-        
-        mClipImageView = mClipImageLayout.getClipBorderView();
-        
-        mZoomImageView = mClipImageLayout.getZoomImageView();
-        
-        inflate.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+        ClipBorderView clipImageView = mClipImageLayout.getClipBorderView();
+        ClipZoomImageView zoomImageView = mClipImageLayout.getZoomImageView();
+        final ImageLoader imageLoader = ImagePicker.getInstance().getImageLoader();
+        if (imageLoader != null) {
+            imageLoader.loadCropImage(this, mPath, zoomImageView);
+        } else {
+            mOnImageSelectListener.onSelectFail("ImageLoader = null");
+            dismiss();
+        }
+    
+        inflate.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mOnImageSelectListener != null) {
+                    mOnImageSelectListener.onSelectFail("cancel");
+                }
                 dismiss();
             }
         });
-        inflate.findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+    
+        inflate.findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bitmap avatar = mClipImageLayout.clip(mCropSize, mCropSize);
-                if (avatar != null) {
-                    if (mOnCropListener != null) {
-                        mOnCropListener.onCropSuccess(writeToFile(avatar));
-                    }
+                if (mOnImageSelectListener != null) {
+                    mOnImageSelectListener.onSelectSuccess(writeToFile(avatar));
                 }
                 dismiss();
             }
         });
         
-        if (mImageLoader != null) {
-            mImageLoader.loadCropImage(this, mPath, mZoomImageView);
-        }
-        
         return inflate;
     }
     
     private String writeToFile(@NonNull Bitmap bitmap) {
-        String diskCachePath = getDiskCachePath(mActivity);
-        deleteAvatarFile(diskCachePath);
-        File file = new File(diskCachePath, "avatar_" + System.currentTimeMillis() + ".jpg");
+        File avatarDir = mActivity.getExternalFilesDir("avatar");
+        if (avatarDir != null) {
+            deleteAvatarFile(avatarDir);
+        }
+        File file = new File(avatarDir, "avatar_" + System.currentTimeMillis() + ".jpg");
         
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
@@ -156,46 +154,21 @@ public class CropDialogFragment extends DialogFragment {
         return file.getAbsolutePath();
     }
     
-    private String getDiskCachePath(Context context) {
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                || !Environment.isExternalStorageRemovable()
-                && context.getExternalCacheDir() != null) {
-            File externalCacheDir = context.getExternalCacheDir();
-            if (externalCacheDir != null) {
-                return context.getExternalCacheDir().getPath();
-            }
-            return context.getCacheDir().getPath();
-        } else {
-            return context.getCacheDir().getPath();
-        }
-    }
-    
-    private void deleteAvatarFile(String path) {
-        //如果filePath不以文件分隔符结尾，自动添加文件分隔符
-        if (!path.endsWith(File.separator)) {
-            path = path + File.separator;
-        }
-        File dirFile = new File(path);
-        if (dirFile.exists() && dirFile.isDirectory()) {
-            File[] files = dirFile.listFiles();
+    private void deleteAvatarFile(File dir) {
+        if (dir.exists() && dir.isDirectory()) {
+            File[] files = dir.listFiles();
             //遍历删除文件夹下的所有文件
             for (File file : files) {
                 if (file.isFile() && file.getName().startsWith("avatar_")) {
                     file.delete();
                 }
             }
-            
         }
     }
     
-    private OnCropListener mOnCropListener;
-    
-    public void setOnCropListener(OnCropListener onCropListener) {
-        mOnCropListener = onCropListener;
+    public void setOnImageSelectListener(Picker.OnImageSelectListener onImageSelectListener) {
+        mOnImageSelectListener = onImageSelectListener;
     }
     
-    public interface OnCropListener {
-        void onCropSuccess(String avatarPath);
-    }
     
 }

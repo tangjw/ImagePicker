@@ -1,9 +1,10 @@
 package cn.tangjunwei.imagepicker;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -11,10 +12,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.hjq.permissions.OnPermission;
 import com.hjq.permissions.XXPermissions;
 
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import cn.tangjunwei.imagelibrary.core.CoreFragment;
+import cn.tangjunwei.imagelibrary.core.ImagePicker;
+import cn.tangjunwei.imagelibrary.core.Picker;
+import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
 
 /**
  * desc
@@ -23,25 +29,30 @@ import androidx.appcompat.app.AppCompatActivity;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public class PersonInfoActivity extends AppCompatActivity {
+public class PersonInfoActivity extends AppCompatActivity implements Picker.OnImageSelectListener {
     
-    private String mAvatar;
+    private static final String TAG = PersonInfoActivity.class.getSimpleName();
     private ImageView mImageView;
+    
     
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         setContentView(R.layout.activity_person_info);
-        
         mImageView = findViewById(R.id.imageView);
         GlideApp.with(this)
-                .load(mAvatar)
+                .load(R.drawable.ic_avatar_placeholder)
                 .placeholder(R.drawable.ic_avatar_placeholder)
                 .error(R.drawable.ic_avatar_placeholder)
                 .into(mImageView);
+        if (savedInstanceState != null) {
+            System.out.println("PersonInfoActivity savedInstanceState != null");
+            ImagePicker.getInstance().initListener(this, this);
+        }
+        ImagePicker.getInstance().initImageLoader(new MyImageLoaderImpl());
+        
+        System.out.println("PersonInfoActivity onCreate end");
     }
-    
     
     @SuppressWarnings("all")
     private void showSelectAvatarDialog() {
@@ -113,27 +124,50 @@ public class PersonInfoActivity extends AppCompatActivity {
         startActivityForResult(new Intent(this, TestActivity.class), 1234);
     }
     
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == 1234) {
-                if (data != null) {
-                    mAvatar = data.getStringExtra("avatar");
-                    GlideApp.with(this)
-                            .load(mAvatar)
-                            .placeholder(mImageView.getDrawable())
-                            .error(mImageView.getDrawable())
-                            .into(mImageView);
-                }
-            }
-        }
-    }
-    
     public void back(View view) {
         finish();
     }
     
     public void selectAvatar(View view) {
-        showSelectAvatarDialog();
+        //showSelectAvatarDialog();
+        ImagePicker.getInstance().takeAvatar(this, null, this);
+//        ImagePicker.getInstance().takePicture(this, this);
+    }
+    
+    @Override
+    public void onSelectSuccess(String avatarPath) {
+        Log.w(TAG, avatarPath);
+        GlideApp.with(this)
+                .load(avatarPath)
+                .placeholder(R.drawable.ic_avatar_placeholder)
+                .error(R.drawable.ic_avatar_placeholder)
+                .into(mImageView);
+        checkFragment();
+    }
+    
+    @Override
+    public void onSelectSuccess(String[] paths) {
+        Log.w(TAG, Arrays.toString(paths));
+        checkFragment();
+    }
+    
+    @Override
+    public void onSelectFail(String msg) {
+        Log.e(TAG, msg);
+        checkFragment();
+    }
+    
+    private void checkFragment() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "find CoreFragment: " + getSupportFragmentManager().findFragmentByTag(CoreFragment.class.getSimpleName()));
+                CropDialogFragment fragment = (CropDialogFragment) getSupportFragmentManager().findFragmentByTag(CropDialogFragment.class.getSimpleName());
+                Log.d(TAG, "find CropDialogFragment: " + fragment);
+                if (fragment != null) {
+                    fragment.show(getSupportFragmentManager(), CropDialogFragment.class.getSimpleName());
+                }
+            }
+        }, 5000L);
     }
 }

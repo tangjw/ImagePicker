@@ -37,7 +37,7 @@ import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public class ImageSelectFragment extends ILBaseFragment implements AlbumView, CropDialogFragment.OnCropListener {
+public class ImageSelectFragment extends ILBaseFragment implements AlbumView/*, CropDialogFragment.OnCropListener*/ {
     
     private final static String ARG_PARAM1 = "ImageLoader";
     
@@ -70,16 +70,16 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Cr
         return fragment;
     }
     
-    public void setImageLoader(ImageLoader imageLoader) {
+    /*public void setImageLoader(ImageLoader imageLoader) {
         mImageLoader = imageLoader;
         if (getFragmentManager() != null) {
             mCropDialogFragment = (CropDialogFragment) getFragmentManager().findFragmentByTag("crop");
             if (mCropDialogFragment != null) {
                 mCropDialogFragment.setImageLoader(mImageLoader);
-                mCropDialogFragment.setOnCropListener(ImageSelectFragment.this);
+                //mCropDialogFragment.setOnCropListener(ImageSelectFragment.this);
             }
         }
-    }
+    }*/
     
     @Override
     protected void initArguments(@NonNull Bundle args) {
@@ -124,12 +124,10 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Cr
                 //toggleSelection(position);
                 // 打开头像剪切界面
                 String path = mList.get(position).path;
-                if (getFragmentManager() != null) {
-                    mCropDialogFragment = CropDialogFragment.newInstance(path, mPickerConfig.getCropSize());
-                    mCropDialogFragment.setImageLoader(mImageLoader);
-                    mCropDialogFragment.setOnCropListener(ImageSelectFragment.this);
-                    mCropDialogFragment.show(getFragmentManager(), "crop");
-                }
+                mCropDialogFragment = CropDialogFragment.newInstance(path, mPickerConfig.getCropSize());
+                // mCropDialogFragment.setImageLoader(mImageLoader);
+                //mCropDialogFragment.setOnCropListener(ImageSelectFragment.this);
+                mCropDialogFragment.show(mActivity.getSupportFragmentManager(), "crop");
             }
         });
     }
@@ -254,12 +252,12 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Cr
         return dm.heightPixels;
     }
     
-    @Override
+    /*@Override
     public void onCropSuccess(String avatarPath) {
         if (mOnSelectImageListener != null) {
             mOnSelectImageListener.onSelectAvatarSuccess(avatarPath);
         }
-    }
+    }*/
     
     private OnSelectImageListener mOnSelectImageListener;
     

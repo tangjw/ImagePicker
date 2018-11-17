@@ -1,9 +1,9 @@
 package cn.tangjunwei.imagelibrary;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.widget.ImageView;
+
+import java.io.Serializable;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -15,7 +15,7 @@ import androidx.fragment.app.FragmentActivity;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public interface ImageLoader {
+public interface ImageLoader extends Serializable {
     
     void loadImage(Context context, String path, ImageView imageView);
     

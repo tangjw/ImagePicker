@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <paths>
-        <root-path
-            name="camera_photos"
-            path=""/>
+        <!-- <root-path
+             name="camera_photos"
+             path=""/>-->
+        <!--对应的是Context.getFilesDir()下的images文件夹-->
+        <!--<files-path
+            name="my_images"
+            path="images/"/>-->
+        <!--<external-path-->
+        <!--name="my_images"-->
+        <!--path="Android/data/com.example.package.name/files/Pictures"/>-->
+        <files-path
+            name="my_avatar"
+            path="avatar/"/>
+        <external-files-path
+            name="my_avatar"
+            path="avatar/"/>
 
     </paths>
 

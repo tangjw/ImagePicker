@@ -24,11 +24,11 @@ public class TestActivity extends AppCompatActivity implements ImageSelectFragme
             // System.out.println(imageLoader);
             fragment = ImageSelectFragment.newInstance(null);
         }
-        fragment.setImageLoader(new MyImageLoaderImpl());
+       /* fragment.setImageLoader(new MyImageLoaderImpl());
         fragment.setOnSelectImageListener(this);
         fragmentManager.beginTransaction()
                 .replace(R.id.fl_container, fragment, "test")
-                .commit();
+                .commit();*/
     
     }
     

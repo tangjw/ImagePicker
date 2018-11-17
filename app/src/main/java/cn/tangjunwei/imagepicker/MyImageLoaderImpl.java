@@ -47,6 +47,7 @@ public class MyImageLoaderImpl implements ImageLoader {
     
     @Override
     public void loadCropImage(FragmentActivity activity, String path, ImageView imageView) {
+        System.out.println("loadCropImage: " + path);
         loadCropImage(GlideApp.with(activity), path, imageView);
     }
     

@@ -35,6 +35,14 @@ public class PersonFragment extends BaseFragment {
             }
         });
     
+        rootView.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // startActivity(new Intent(mActivity, PersonInfoActivity.class));
+                //System.out.println(ImagePicker.getInstance().getOnImageCaptureListener());
+            }
+        });
+    
     
         MyImageLoaderImpl imageLoader = new MyImageLoaderImpl();
 //        imageLoader.loadImage(this,?);
