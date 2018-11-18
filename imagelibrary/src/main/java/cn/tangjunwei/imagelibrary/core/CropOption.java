@@ -1,7 +1,8 @@
 package cn.tangjunwei.imagelibrary.core;
 
 import android.os.Parcel;
-import android.os.Parcelable;
+
+import java.io.Serializable;
 
 /**
  * desc
@@ -10,19 +11,9 @@ import android.os.Parcelable;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public class CropOption implements Parcelable {
+public class CropOption implements Serializable {
     
-    public static final Creator<CropOption> CREATOR = new Creator<CropOption>() {
-        @Override
-        public CropOption createFromParcel(Parcel source) {
-            return new CropOption(source);
-        }
-        
-        @Override
-        public CropOption[] newArray(int size) {
-            return new CropOption[size];
-        }
-    };
+    
     private int with = 240;
     private int height = 240;
     private int quality = 100;
@@ -66,15 +57,4 @@ public class CropOption implements Parcelable {
         this.quality = quality;
     }
     
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-    
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.with);
-        dest.writeInt(this.height);
-        dest.writeInt(this.quality);
-    }
 }

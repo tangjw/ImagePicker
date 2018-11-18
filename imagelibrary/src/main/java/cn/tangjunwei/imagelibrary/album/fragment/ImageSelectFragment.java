@@ -27,7 +27,9 @@ import cn.tangjunwei.imagelibrary.album.adapter.ImageSelectAdapter;
 import cn.tangjunwei.imagelibrary.album.bean.AlbumBean;
 import cn.tangjunwei.imagelibrary.album.bean.ImageBean;
 import cn.tangjunwei.imagelibrary.base.ILBaseFragment;
-import cn.tangjunwei.imagelibrary.core.PickerConfig;
+import cn.tangjunwei.imagelibrary.core.CropOption;
+import cn.tangjunwei.imagelibrary.core.ImagePicker;
+import cn.tangjunwei.imagelibrary.core.Picker;
 import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
 
 /**
@@ -37,7 +39,7 @@ import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public class ImageSelectFragment extends ILBaseFragment implements AlbumView/*, CropDialogFragment.OnCropListener*/ {
+public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Picker.OnImageSelectListener/*, CropDialogFragment.OnCropListener*/ {
     
     private final static String ARG_PARAM1 = "ImageLoader";
     
@@ -56,15 +58,16 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView/*, 
     private int mCurAlbumIndex = 0;
     private List<ImageBean> mList;
     private CropDialogFragment mCropDialogFragment;
-    private PickerConfig mPickerConfig;
+    private CropOption mCropOption;
     private int mMaxCount;
     private int mCropSize;
     
     
-    public static ImageSelectFragment newInstance(@Nullable PickerConfig pickerConfig) {
+    public static ImageSelectFragment newInstance(int maxCount, @Nullable CropOption cropOption) {
         
         Bundle args = new Bundle();
-        args.putParcelable("config", pickerConfig);
+        args.putInt("MaxCount", maxCount);
+        args.putSerializable("CropOption", cropOption);
         ImageSelectFragment fragment = new ImageSelectFragment();
         fragment.setArguments(args);
         return fragment;
@@ -82,12 +85,27 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView/*, 
     }*/
     
     @Override
-    protected void initArguments(@NonNull Bundle args) {
-        mPickerConfig = args.getParcelable("config");
-        if (mPickerConfig == null) {
-            mPickerConfig = new PickerConfig();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        mImageLoader = ImagePicker.getInstance().getImageLoader();
+        if (savedInstanceState != null) {
+            if (mImageLoader == null) {
+                mImageLoader = (ImageLoader) savedInstanceState.getSerializable("ImageLoader");
+                if (mImageLoader != null) {
+                    ImagePicker.getInstance().initImageLoader(mImageLoader);
+                }
+            }
         }
-        mMaxCount = mPickerConfig.getMaxCount();
+        super.onCreate(savedInstanceState);
+    
+    }
+    
+    @Override
+    protected void initArguments(@NonNull Bundle args) {
+        mCropOption = (CropOption) args.getSerializable("CropOption");
+        if (mCropOption == null) {
+            mCropOption = new CropOption();
+        }
+        mMaxCount = args.getInt("MaxCount");
     }
     
     @Override
@@ -124,17 +142,18 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView/*, 
                 //toggleSelection(position);
                 // 打开头像剪切界面
                 String path = mList.get(position).path;
-                mCropDialogFragment = CropDialogFragment.newInstance(path, mPickerConfig.getCropSize());
+                System.out.println(path);
+                mCropDialogFragment = CropDialogFragment.newInstance(path, mCropOption.getWith());
                 // mCropDialogFragment.setImageLoader(mImageLoader);
-                //mCropDialogFragment.setOnCropListener(ImageSelectFragment.this);
-                mCropDialogFragment.show(mActivity.getSupportFragmentManager(), "crop");
+                mCropDialogFragment.setOnImageSelectListener(ImageSelectFragment.this);
+                mCropDialogFragment.show(mActivity.getSupportFragmentManager(), CropDialogFragment.class.getSimpleName());
             }
         });
     }
     
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        //outState.putInt("current", mCurAlbumIndex);
+        outState.putSerializable("ImageLoader", ImagePicker.getInstance().getImageLoader());
     }
     
     @Override
@@ -263,6 +282,21 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView/*, 
     
     public void setOnSelectImageListener(OnSelectImageListener onSelectImageListener) {
         mOnSelectImageListener = onSelectImageListener;
+    }
+    
+    @Override
+    public void onSelectSuccess(String avatarPath) {
+        
+    }
+    
+    @Override
+    public void onSelectSuccess(String[] paths) {
+        
+    }
+    
+    @Override
+    public void onSelectFail(String msg) {
+        
     }
     
     public interface OnSelectImageListener {

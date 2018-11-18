@@ -22,7 +22,7 @@ public class TestActivity extends AppCompatActivity implements ImageSelectFragme
         if (fragment == null) {
             MyImageLoaderImpl imageLoader = new MyImageLoaderImpl();
             // System.out.println(imageLoader);
-            fragment = ImageSelectFragment.newInstance(null);
+            fragment = ImageSelectFragment.newInstance(1, null);
         }
        /* fragment.setImageLoader(new MyImageLoaderImpl());
         fragment.setOnSelectImageListener(this);

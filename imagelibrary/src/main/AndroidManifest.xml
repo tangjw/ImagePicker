@@ -13,6 +13,12 @@
                 android:resource="@xml/file_paths"/>
         </provider>
 
+        <activity
+            android:name=".album.AlbumActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+
+
     </application>
 
 </manifest>

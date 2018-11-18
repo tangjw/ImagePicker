@@ -47,7 +47,7 @@ public class CoreFragment extends Fragment {
         Bundle args = new Bundle();
         args.putInt("CoreType", type);
         args.putInt("MaxCount", maxCount);
-        args.putParcelable("CropOption", cropOption);
+        args.putSerializable("CropOption", cropOption);
         CoreFragment fragment = new CoreFragment();
         fragment.setArguments(args);
         return fragment;
@@ -87,7 +87,7 @@ public class CoreFragment extends Fragment {
         if (args != null) {
             mCoreType = args.getInt("CoreType");
             mMaxCount = args.getInt("MaxCount");
-            mCropOption = args.getParcelable("CropOption");
+            mCropOption = (CropOption) args.getSerializable("CropOption");
             if (mCropOption == null) {
                 mCropOption = new CropOption();
             }

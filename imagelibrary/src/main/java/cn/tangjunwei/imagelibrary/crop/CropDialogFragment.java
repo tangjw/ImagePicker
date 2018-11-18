@@ -40,6 +40,7 @@ public class CropDialogFragment extends DialogFragment {
     
     
     public static CropDialogFragment newInstance(String path, int cropSize) {
+        System.out.println(cropSize);
         Bundle args = new Bundle();
         args.putString("path", path);
         args.putInt("cropSize", cropSize);
@@ -88,7 +89,7 @@ public class CropDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mOnImageSelectListener == null) {
-            //dismiss();
+            dismiss();
         }
         View inflate = inflater.inflate(R.layout.fragment_crop, container, false);
         mClipImageLayout = inflate.findViewById(R.id.clipimagelayout);
