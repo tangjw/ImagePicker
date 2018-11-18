@@ -206,6 +206,14 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
         }
     }
     
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mListPopupWindow != null) {
+            mListPopupWindow.dismiss();
+        }
+    }
+    
     /**
      * 显示相册选择 dialog
      */
