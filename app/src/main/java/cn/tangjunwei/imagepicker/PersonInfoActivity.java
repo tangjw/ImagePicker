@@ -3,7 +3,6 @@ package cn.tangjunwei.imagepicker;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import cn.tangjunwei.imagelibrary.core.CoreFragment;
 import cn.tangjunwei.imagelibrary.core.ImagePicker;
 import cn.tangjunwei.imagelibrary.core.Picker;
 import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
@@ -125,12 +123,31 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
     }
     
     public void back(View view) {
-        finish();
+        // finish();
+        System.out.println("11111111111134234");
+        CropDialogFragment.newInstance("", 240).show(getSupportFragmentManager(), "tt");
     }
     
     public void selectAvatar(View view) {
+        if (XXPermissions.isHasPermission(PersonInfoActivity.this, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            ImagePicker.getInstance().takeAvatar(this, null, this);
+        } else {
+            XXPermissions.with(PersonInfoActivity.this)
+                    .permission(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .request(new OnPermission() {
+                        @Override
+                        public void hasPermission(List<String> granted, boolean isAll) {
+                            ImagePicker.getInstance().takeAvatar(PersonInfoActivity.this, null, PersonInfoActivity.this);
+                        }
+                    
+                        @Override
+                        public void noPermission(List<String> denied, boolean quick) {
+                            System.out.println("CAMERA denied: ");
+                        }
+                    });
+        }
         //showSelectAvatarDialog();
-        ImagePicker.getInstance().takeAvatar(this, null, this);
+
 //        ImagePicker.getInstance().takePicture(this, this);
     }
     
@@ -158,7 +175,7 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
     }
     
     private void checkFragment() {
-        new Handler().postDelayed(new Runnable() {
+      /*  new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG, "find CoreFragment: " + getSupportFragmentManager().findFragmentByTag(CoreFragment.class.getSimpleName()));
@@ -168,6 +185,6 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
                     fragment.show(getSupportFragmentManager(), CropDialogFragment.class.getSimpleName());
                 }
             }
-        }, 5000L);
+        }, 5000L);*/
     }
 }

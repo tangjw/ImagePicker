@@ -88,7 +88,7 @@ public class CropDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mOnImageSelectListener == null) {
-            dismiss();
+            //dismiss();
         }
         View inflate = inflater.inflate(R.layout.fragment_crop, container, false);
         mClipImageLayout = inflate.findViewById(R.id.clipimagelayout);
