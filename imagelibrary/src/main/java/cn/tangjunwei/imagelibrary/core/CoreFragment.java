@@ -22,6 +22,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import cn.tangjunwei.imagelibrary.ImageLoader;
+import cn.tangjunwei.imagelibrary.album.AlbumActivity;
 import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
 
 /**
@@ -34,6 +35,7 @@ import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
 public class CoreFragment extends Fragment {
     private static final int REQUEST_TAKE_AVATAR = 101;
     private static final int REQUEST_TAKE_IMAGE = 102;
+    private static final int REQUEST_SELECT_AVATAR = 103;
     private Picker.OnImageSelectListener mOnImageSelectListener;
     private int mCoreType;
     private int mMaxCount;
@@ -74,9 +76,6 @@ public class CoreFragment extends Fragment {
             if (imageLoader != null) {
                 ImagePicker.getInstance().initImageLoader(imageLoader);
             } else {
-                if (mOnImageSelectListener != null) {
-                    mOnImageSelectListener.onSelectFail("ImageLoader = null!");
-                }
                 closeSelf();
             }
             
@@ -124,7 +123,7 @@ public class CoreFragment extends Fragment {
                 break;
             case CoreType.SELECT_AVATAR:
                 mCurrentState = "SELECT_AVATAR";
-                //takePic();
+                selectAvatar();
                 break;
             default://什么也不做直接关闭
                 mCurrentState = null;
@@ -194,6 +193,9 @@ public class CoreFragment extends Fragment {
                 case REQUEST_TAKE_IMAGE:
                     mOnImageSelectListener.onSelectSuccess(new String[]{mCurrentPhotoPath});
                     break;
+                case REQUEST_SELECT_AVATAR:
+                    mOnImageSelectListener.onSelectSuccess(data.getStringExtra("path"));
+                    break;
                 default:
                     mOnImageSelectListener.onSelectFail("cancel");
                     break;
@@ -203,6 +205,12 @@ public class CoreFragment extends Fragment {
         }
         closeSelf();
     }
+    
+    
+    private void selectAvatar() {
+        startActivityForResult(new Intent(mActivity, AlbumActivity.class), REQUEST_SELECT_AVATAR);
+    }
+    
     
     /**
      * 拍照
@@ -227,9 +235,7 @@ public class CoreFragment extends Fragment {
             // this.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             
         } else {
-            if (mOnImageSelectListener != null) {
-                mOnImageSelectListener.onSelectFail("相机不可用");
-            }
+            mOnImageSelectListener.onSelectFail("相机不可用");
         }
     }
     

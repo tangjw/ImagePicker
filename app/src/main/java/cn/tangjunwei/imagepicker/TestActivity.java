@@ -1,7 +1,5 @@
 package cn.tangjunwei.imagepicker;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -9,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import cn.tangjunwei.imagelibrary.album.fragment.ImageSelectFragment;
 
-public class TestActivity extends AppCompatActivity implements ImageSelectFragment.OnSelectImageListener {
+public class TestActivity extends AppCompatActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,25 +40,6 @@ public class TestActivity extends AppCompatActivity implements ImageSelectFragme
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // System.out.println("activity onRestoreInstanceState");
-    }
-    
-    @Override
-    public void onSelectAvatarSuccess(String avatarPath) {
-        System.out.println("onSelectAvatarSuccess: " + avatarPath);
-        Intent intent = new Intent();
-        intent.putExtra("avatar", avatarPath);
-        setResult(Activity.RESULT_OK, intent);
-        finish();
-    }
-    
-    @Override
-    public void onSelectImageSuccess(String[] imagePaths) {
-        
-    }
-    
-    @Override
-    public void onSelectError(String message) {
-    
     }
     
     public void back(View view) {

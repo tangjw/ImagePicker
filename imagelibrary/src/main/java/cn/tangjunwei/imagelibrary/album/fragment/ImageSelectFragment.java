@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.fragment.app.FragmentManager;
 import cn.tangjunwei.imagelibrary.ImageLoader;
 import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.AlbumPresenter;
@@ -39,7 +40,7 @@ import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Picker.OnImageSelectListener/*, CropDialogFragment.OnCropListener*/ {
+public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Picker.OnImageSelectListener, AdapterView.OnItemClickListener {
     
     private final static String ARG_PARAM1 = "ImageLoader";
     
@@ -57,10 +58,11 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     private AlbumSelectAdapter mAlbumSelectAdapter;
     private int mCurAlbumIndex = 0;
     private List<ImageBean> mList;
-    private CropDialogFragment mCropDialogFragment;
+    
     private CropOption mCropOption;
     private int mMaxCount;
     private int mCropSize;
+    private CropDialogFragment mCropDialogFragment;
     
     
     public static ImageSelectFragment newInstance(int maxCount, @Nullable CropOption cropOption) {
@@ -73,16 +75,6 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
         return fragment;
     }
     
-    /*public void setImageLoader(ImageLoader imageLoader) {
-        mImageLoader = imageLoader;
-        if (getFragmentManager() != null) {
-            mCropDialogFragment = (CropDialogFragment) getFragmentManager().findFragmentByTag("crop");
-            if (mCropDialogFragment != null) {
-                mCropDialogFragment.setImageLoader(mImageLoader);
-                //mCropDialogFragment.setOnCropListener(ImageSelectFragment.this);
-            }
-        }
-    }*/
     
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,7 +118,8 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
         mPresenter = new AlbumPresenter(this);
         
         mPresenter.loadAllImage(mActivity);
-        
+    
+    
         mTvSelectAlbum.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -135,20 +128,9 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
                 }
             }
         });
-        
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //toggleSelection(position);
-                // 打开头像剪切界面
-                String path = mList.get(position).path;
-                System.out.println(path);
-                mCropDialogFragment = CropDialogFragment.newInstance(path, mCropOption.getWith());
-                // mCropDialogFragment.setImageLoader(mImageLoader);
-                mCropDialogFragment.setOnImageSelectListener(ImageSelectFragment.this);
-                mCropDialogFragment.show(mActivity.getSupportFragmentManager(), CropDialogFragment.class.getSimpleName());
-            }
-        });
+    
+    
+        mGridView.setOnItemClickListener(this);
     }
     
     @Override
@@ -279,19 +261,6 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
         return dm.heightPixels;
     }
     
-    /*@Override
-    public void onCropSuccess(String avatarPath) {
-        if (mOnSelectImageListener != null) {
-            mOnSelectImageListener.onSelectAvatarSuccess(avatarPath);
-        }
-    }*/
-    
-    private OnSelectImageListener mOnSelectImageListener;
-    
-    public void setOnSelectImageListener(OnSelectImageListener onSelectImageListener) {
-        mOnSelectImageListener = onSelectImageListener;
-    }
-    
     @Override
     public void onSelectSuccess(String avatarPath) {
         
@@ -307,12 +276,19 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
         
     }
     
-    public interface OnSelectImageListener {
-        void onSelectAvatarSuccess(String avatarPath);
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        FragmentManager fm = mActivity.getSupportFragmentManager();
+        CropDialogFragment fragment = (CropDialogFragment) fm.findFragmentByTag(CropDialogFragment.class.getSimpleName());
         
-        void onSelectImageSuccess(String[] imagePaths);
+        if (fragment != null) {
+            fragment.dismissAllowingStateLoss();
+        }
+        fragment = CropDialogFragment.newInstance(mList.get(position).path, mCropOption.getWith());
+        fragment.setOnImageSelectListener((Picker.OnImageSelectListener) mActivity);
+        fragment.show(fm, CropDialogFragment.class.getSimpleName());
         
-        void onSelectError(String message);
     }
+    
     
 }

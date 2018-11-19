@@ -22,10 +22,6 @@ public class ImageSelectAdapter extends BaseAdapter {
         mImageLoader = imageLoader;
     }
     
-    /*public ImageSelectAdapter(List<ImageBean> list) {
-        mList = list;
-    }*/
-    
     public void refreshData(List<ImageBean> list) {
         mList = list;
         notifyDataSetChanged();

@@ -27,7 +27,6 @@ task clean(type: Delete) {
 }
 
 ext {
-
     //app version
     versionCode = 1
     versionName = "1.0"
@@ -39,17 +38,4 @@ ext {
 
     // App dependencies
     appcompat = '1.0.2'
-    supportLibraryVersion = '27.1.1'
-    constraintLayoutVersion = '1.1.0'
-    junitVersion = '4.12'
-    //guavaVersion = '18.0'
-    mockitoVersion = '1.10.19'
-    powerMockito = '1.6.2'
-    hamcrestVersion = '1.3'
-    runnerVersion = '1.0.0'
-    rulesVersion = '1.0.0'
-    espressoVersion = '3.0.1'
-    rxjavaVersion = '2.1.3'
-    rxandroidVersion = '2.0.1'
-    sqlbriteVersion = '2.0.0'
 }

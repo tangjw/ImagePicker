@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="ClipImageLayout">
-        <attr name="padding_horizontal" format="dimension"/>
+    <declare-styleable name="ClipBorderView">
+        <attr name="padding_border_width" format="dimension"/>
         <attr name="border_width" format="dimension"/>
     </declare-styleable>
+    <declare-styleable name="ClipZoomImageView">
+        <attr name="padding_clip_width" format="dimension"/>
+    </declare-styleable>
+
     <declare-styleable name="RatioFrameLayout">
         <attr name="ratio_width" format="float"/>
         <attr name="ratio_height" format="float"/>

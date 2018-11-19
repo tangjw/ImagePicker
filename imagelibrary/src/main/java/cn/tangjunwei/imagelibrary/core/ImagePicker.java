@@ -49,6 +49,7 @@ public class ImagePicker implements Picker {
             case "SELECT_IMAGE":
                 break;
             case "SELECT_AVATAR":
+                selectAvatar(activity, null, onImageSelectListener);
                 break;
             default:
                 break;
@@ -88,6 +89,7 @@ public class ImagePicker implements Picker {
             tryClearOldFragment(fragmentActivity);
             return;
         }
+    
     }
     
     @Override
@@ -117,6 +119,14 @@ public class ImagePicker implements Picker {
             tryClearOldFragment(fragmentActivity);
             return;
         }
+        FragmentManager fm = fragmentActivity.getSupportFragmentManager();
+        CoreFragment coreFragment = (CoreFragment) fm.findFragmentByTag(CoreFragment.class.getSimpleName());
+        if (coreFragment == null) {
+            coreFragment = CoreFragment.newInstance(CoreType.SELECT_AVATAR, null, 1);
+            fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commit();
+        }
+        coreFragment.setOnImageSelectListener(onImageSelectListener);
+        
     }
     
     private boolean checkImageLoader(@NonNull OnImageSelectListener onImageSelectListener) {

@@ -1,12 +1,12 @@
 package cn.tangjunwei.imagelibrary.crop;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -19,6 +19,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
+import cn.tangjunwei.imagelibrary.R;
 
 
 /**
@@ -66,6 +67,8 @@ public class ClipZoomImageView extends AppCompatImageView implements
      * 垂直方向与View的边距
      */
     private int mVerticalPadding;
+    private AutoScaleRunnable mAction1;
+    private AutoScaleRunnable mAction2;
     
     
     public ClipZoomImageView(Context context) {
@@ -78,6 +81,9 @@ public class ClipZoomImageView extends AppCompatImageView implements
     
     public ClipZoomImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ClipZoomImageView);
+        mHorizontalPadding = typedArray.getDimensionPixelOffset(R.styleable.ClipZoomImageView_padding_clip_width, 0);
+        typedArray.recycle();
         init(context);
     }
     
@@ -92,12 +98,13 @@ public class ClipZoomImageView extends AppCompatImageView implements
                         float x = e.getX();
                         float y = e.getY();
                         if (getScale() < SCALE_MID) {
-                            ClipZoomImageView.this.postDelayed(
-                                    new AutoScaleRunnable(SCALE_MID, x, y), 16);
+                            mAction1 = new AutoScaleRunnable(SCALE_MID, x, y);
+                            postDelayed(mAction1, 16);
                             isAutoScale = true;
                         } else {
-                            ClipZoomImageView.this.postDelayed(
-                                    new AutoScaleRunnable(initScale, x, y), 16);
+                            mAction2 = new AutoScaleRunnable(initScale, x, y);
+                            postDelayed(
+                                    mAction2, 16);
                             isAutoScale = true;
                         }
                         
@@ -235,6 +242,14 @@ public class ClipZoomImageView extends AppCompatImageView implements
     
     @Override
     protected void onDetachedFromWindow() {
+        if (mAction1 != null) {
+            removeCallbacks(mAction1);
+        
+        }
+        if (mAction2 != null) {
+            removeCallbacks(mAction2);
+        
+        }
         super.onDetachedFromWindow();
     }
     

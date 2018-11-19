@@ -32,15 +32,18 @@ import cn.tangjunwei.imagelibrary.core.Picker;
  * <a href="https://github.com/tangjw">Follow me</a>
  */
 public class CropDialogFragment extends DialogFragment {
+    private FragmentActivity mActivity;
     
     private String mPath;
     private int mCropSize;
     
-    private ClipImageLayout mClipImageLayout;
+    private Picker.OnImageSelectListener mOnImageSelectListener;
     
+    public void setOnImageSelectListener(Picker.OnImageSelectListener onImageSelectListener) {
+        mOnImageSelectListener = onImageSelectListener;
+    }
     
     public static CropDialogFragment newInstance(String path, int cropSize) {
-        System.out.println(cropSize);
         Bundle args = new Bundle();
         args.putString("path", path);
         args.putInt("cropSize", cropSize);
@@ -49,17 +52,22 @@ public class CropDialogFragment extends DialogFragment {
         return fragment;
     }
     
-    private FragmentActivity mActivity;
-    
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    
         if (context instanceof FragmentActivity) {
             mActivity = (FragmentActivity) context;
         } else {
-            throw new RuntimeException(context.toString() + "must extends FragmentActivity!");
+            throw new ClassCastException(context.toString() + "must extends FragmentActivity!");
         }
         
+    }
+    
+    @Override
+    public void onDetach() {
+        mActivity = null;
+        super.onDetach();
     }
     
     @Override
@@ -83,24 +91,25 @@ public class CropDialogFragment extends DialogFragment {
         }
     }
     
-    private Picker.OnImageSelectListener mOnImageSelectListener;
     
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mOnImageSelectListener == null) {
-            dismiss();
+            closeSelf();
+            return null;
         }
         View inflate = inflater.inflate(R.layout.fragment_crop, container, false);
-        mClipImageLayout = inflate.findViewById(R.id.clipimagelayout);
-        ClipBorderView clipImageView = mClipImageLayout.getClipBorderView();
-        ClipZoomImageView zoomImageView = mClipImageLayout.getZoomImageView();
+    
+        final ClipZoomImageView zoomImageView = inflate.findViewById(R.id.clip_image_view);
+        
         final ImageLoader imageLoader = ImagePicker.getInstance().getImageLoader();
         if (imageLoader != null) {
             imageLoader.loadCropImage(this, mPath, zoomImageView);
         } else {
             mOnImageSelectListener.onSelectFail("ImageLoader = null");
-            dismiss();
+            closeSelf();
+            return null;
         }
     
         inflate.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
@@ -109,18 +118,18 @@ public class CropDialogFragment extends DialogFragment {
                 if (mOnImageSelectListener != null) {
                     mOnImageSelectListener.onSelectFail("cancel");
                 }
-                dismiss();
+                closeSelf();
             }
         });
     
         inflate.findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap avatar = mClipImageLayout.clip(mCropSize, mCropSize);
+                Bitmap avatar = zoomImageView.clip(mCropSize, mCropSize);
                 if (mOnImageSelectListener != null) {
                     mOnImageSelectListener.onSelectSuccess(writeToFile(avatar));
                 }
-                dismiss();
+                closeSelf();
             }
         });
         
@@ -167,9 +176,10 @@ public class CropDialogFragment extends DialogFragment {
         }
     }
     
-    public void setOnImageSelectListener(Picker.OnImageSelectListener onImageSelectListener) {
-        mOnImageSelectListener = onImageSelectListener;
-    }
     
+    private void closeSelf() {
+        mOnImageSelectListener = null;
+        dismissAllowingStateLoss();
+    }
     
 }

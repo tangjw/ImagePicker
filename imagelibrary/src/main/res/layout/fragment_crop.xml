@@ -6,13 +6,17 @@
              android:background="@android:color/black"
              android:orientation="vertical">
 
-    <cn.tangjunwei.imagelibrary.crop.ClipImageLayout
-        android:id="@+id/clipimagelayout"
+    <cn.tangjunwei.imagelibrary.crop.ClipZoomImageView
+        android:id="@+id/clip_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:padding_horizontal="30dp">
+        app:padding_clip_width="30dp"/>
 
-    </cn.tangjunwei.imagelibrary.crop.ClipImageLayout>
+    <cn.tangjunwei.imagelibrary.crop.ClipBorderView
+        android:id="@+id/clip_border_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:padding_border_width="30dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,7 +1,6 @@
 package cn.tangjunwei.imagepicker;
 
 import android.Manifest;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +15,6 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import cn.tangjunwei.imagelibrary.album.AlbumActivity;
 import cn.tangjunwei.imagelibrary.core.ImagePicker;
 import cn.tangjunwei.imagelibrary.core.Picker;
 
@@ -119,12 +117,11 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
     }
     
     private void openCamera() {
-        ImagePicker.getInstance().takeAvatar(PersonInfoActivity.this, null, PersonInfoActivity.this);
+        ImagePicker.getInstance().takeAvatar(this, null, this);
     }
     
     private void openAlbumAct() {
-        //startActivityForResult(new Intent(this, TestActivity.class), 1234);
-        startActivity(new Intent(this, AlbumActivity.class));
+        ImagePicker.getInstance().selectAvatar(this, null, this);
     }
     
     public void back(View view) {
@@ -132,26 +129,7 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
     }
     
     public void selectAvatar(View view) {
-       /* if (XXPermissions.isHasPermission(PersonInfoActivity.this, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            ImagePicker.getInstance().takeAvatar(this, null, this);
-        } else {
-            XXPermissions.with(PersonInfoActivity.this)
-                    .permission(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    .request(new OnPermission() {
-                        @Override
-                        public void hasPermission(List<String> granted, boolean isAll) {
-                            ImagePicker.getInstance().takeAvatar(PersonInfoActivity.this, null, PersonInfoActivity.this);
-                        }
-                    
-                        @Override
-                        public void noPermission(List<String> denied, boolean quick) {
-                            System.out.println("CAMERA denied: ");
-                        }
-                    });
-        }*/
         showSelectAvatarDialog();
-
-//        ImagePicker.getInstance().takePicture(this, this);
     }
     
     @Override

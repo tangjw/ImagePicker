@@ -1,7 +1,7 @@
 package cn.tangjunwei.imagelibrary.crop;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,8 +9,9 @@ import android.graphics.Paint.Style;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
+
+import cn.tangjunwei.imagelibrary.R;
 
 /**
  * 鸿洋博客: http://blog.csdn.net/lmj623565791/article/details/39761281
@@ -25,15 +26,8 @@ public class ClipBorderView extends View {
      * 水平方向与View的边距
      */
     private int mHorizontalPadding;
-    /**
-     * default 2px
-     */
-    private int mBorderWidth = 2;
-    private PorterDuffXfermode mXfermode;
     
-    public void setBorderWidth(int borderWidth) {
-        mBorderWidth = borderWidth;
-    }
+    private PorterDuffXfermode mXfermode;
     
     private Paint mPaint;
     private Paint mPaintBorder;
@@ -48,6 +42,12 @@ public class ClipBorderView extends View {
     
     public ClipBorderView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ClipBorderView);
+        mHorizontalPadding = typedArray.getDimensionPixelOffset(R.styleable.ClipBorderView_padding_border_width, mHorizontalPadding);
+        int mBorderWidth = typedArray.getDimensionPixelOffset(R.styleable.ClipBorderView_border_width, 1);
+        typedArray.recycle();
+        
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(Color.argb(200, 0, 0, 0));
         mPaint.setStyle(Style.FILL);
