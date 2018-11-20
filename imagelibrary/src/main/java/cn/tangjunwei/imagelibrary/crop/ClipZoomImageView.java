@@ -244,11 +244,11 @@ public class ClipZoomImageView extends AppCompatImageView implements
     protected void onDetachedFromWindow() {
         if (mAction1 != null) {
             removeCallbacks(mAction1);
-        
+    
         }
         if (mAction2 != null) {
             removeCallbacks(mAction2);
-        
+    
         }
         super.onDetachedFromWindow();
     }
@@ -408,6 +408,7 @@ public class ClipZoomImageView extends AppCompatImageView implements
     @Override
     public void setImageDrawable(@Nullable Drawable drawable) {
         super.setImageDrawable(drawable);
+        System.out.println("setImageDrawable");
         scaleImage();
         
     }
@@ -419,6 +420,9 @@ public class ClipZoomImageView extends AppCompatImageView implements
             // ImageView的宽和高
             int width = getWidth();
             int height = getHeight();
+            System.out.println("getWidth() " + width);
+            System.out.println("getHeight() " + height);
+            
             if (width <= 0 || height <= 0) return;
             
             // 垂直方向的边距
@@ -427,19 +431,25 @@ public class ClipZoomImageView extends AppCompatImageView implements
             // 拿到图片的宽和高
             int dw = d.getIntrinsicWidth();
             int dh = d.getIntrinsicHeight();
-            
+            System.out.println("dw " + dw);
+            System.out.println("dh " + dh);
             float scale;
             if (dw <= dh) { // 图片竖长, 则宽撑满裁剪框
                 scale = (width * 1.0f - mHorizontalPadding * 2) / dw;
             } else {        // 图片横宽, 则高撑满裁剪框
                 scale = (width * 1.0f - mHorizontalPadding * 2) / dh;
             }
-            
+            System.out.println("scale: " + scale);
             initScale = scale;
             SCALE_MID = initScale * 2;
             SCALE_MAX = initScale * 6;
-            
-            mScaleMatrix.postTranslate(-Math.abs(width - dw) / 2, Math.abs(height - dh) / 2);
+            if (Math.abs(dh) / height >= 3) { //超长图
+                mScaleMatrix.postTranslate(-Math.abs(width - dw) / 2, 0);
+            } else if (Math.abs(dw) / width >= 3) {
+                mScaleMatrix.postTranslate(0, Math.abs(height - dh) / 2);
+            } else {
+                mScaleMatrix.postTranslate(-Math.abs(width - dw) / 2, Math.abs(height - dh) / 2);
+            } 
             mScaleMatrix.postScale(scale, scale, width / 2, height / 2);
             setImageMatrix(mScaleMatrix);
             

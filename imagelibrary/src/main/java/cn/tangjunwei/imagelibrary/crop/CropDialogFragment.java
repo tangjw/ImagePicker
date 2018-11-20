@@ -102,8 +102,8 @@ public class CropDialogFragment extends DialogFragment {
         View inflate = inflater.inflate(R.layout.fragment_crop, container, false);
     
         final ClipZoomImageView zoomImageView = inflate.findViewById(R.id.clip_image_view);
-        
-        final ImageLoader imageLoader = ImagePicker.getInstance().getImageLoader();
+    
+        ImageLoader imageLoader = ImagePicker.getInstance().getImageLoader();
         if (imageLoader != null) {
             imageLoader.loadCropImage(this, mPath, zoomImageView);
         } else {
