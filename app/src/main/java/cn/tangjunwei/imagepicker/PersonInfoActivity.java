@@ -143,6 +143,7 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
         checkFragment();
     }
     
+    
     @Override
     public void onSelectSuccess(String[] paths) {
         Log.w(TAG, Arrays.toString(paths));

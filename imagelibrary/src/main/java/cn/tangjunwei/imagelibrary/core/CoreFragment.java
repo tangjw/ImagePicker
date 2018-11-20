@@ -3,6 +3,8 @@ package cn.tangjunwei.imagelibrary.core;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -43,6 +45,9 @@ public class CoreFragment extends Fragment {
     private FragmentActivity mActivity;
     private String mCurrentState;
     private String mCurrentPhotoPath;
+    private boolean isConfigurationChanged;
+    private boolean isReadyShowCropDialog;
+    private boolean hasCaptured;
     
     static CoreFragment newInstance(int type, CropOption cropOption, int maxCount) {
         
@@ -82,6 +87,7 @@ public class CoreFragment extends Fragment {
             ImagePicker.getInstance().setCurrentState(mCurrentState);
         }
         super.onCreate(savedInstanceState);
+    
         Bundle args = getArguments();
         if (args != null) {
             mCoreType = args.getInt("CoreType");
@@ -182,28 +188,42 @@ public class CoreFragment extends Fragment {
     
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    
         System.out.println("onActivityResult");
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_TAKE_AVATAR:
-                    CropDialogFragment mCropDialogFragment = CropDialogFragment.newInstance(mCurrentPhotoPath, mCropOption.getWith());
-                    mCropDialogFragment.setOnImageSelectListener(mOnImageSelectListener);
-                    mCropDialogFragment.show(mActivity.getSupportFragmentManager(), CropDialogFragment.class.getSimpleName());
+                    if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
+                        hasCaptured = true;
+                    } else {
+                        showCropDialog();
+                        closeSelf();
+                    }
                     break;
                 case REQUEST_TAKE_IMAGE:
                     mOnImageSelectListener.onSelectSuccess(new String[]{mCurrentPhotoPath});
+                    closeSelf();
                     break;
                 case REQUEST_SELECT_AVATAR:
                     mOnImageSelectListener.onSelectSuccess(data.getStringExtra("path"));
+                    closeSelf();
                     break;
                 default:
                     mOnImageSelectListener.onSelectFail("cancel");
+                    closeSelf();
                     break;
             }
         } else {
             mOnImageSelectListener.onSelectFail("resultCode != RESULT_OK");
+            closeSelf();
         }
-        closeSelf();
+    
+    }
+    
+    private void showCropDialog() {
+        CropDialogFragment mCropDialogFragment = CropDialogFragment.newInstance(mCurrentPhotoPath, mCropOption.getWith());
+        mCropDialogFragment.setOnImageSelectListener(mOnImageSelectListener);
+        mCropDialogFragment.show(mActivity.getSupportFragmentManager(), CropDialogFragment.class.getSimpleName());
     }
     
     
@@ -211,6 +231,15 @@ public class CoreFragment extends Fragment {
         startActivityForResult(new Intent(mActivity, AlbumActivity.class), REQUEST_SELECT_AVATAR);
     }
     
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        
+        if (hasCaptured && mCurrentPhotoPath != null && newConfig.orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            showCropDialog();
+            closeSelf();
+        }
+    }
     
     /**
      * 拍照
