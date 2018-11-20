@@ -54,12 +54,9 @@ public class MyImageLoaderImpl implements ImageLoader {
     private void loadCropImage(GlideRequests glideRequests, String path, ImageView imageView){
         glideRequests
                 .load(path)
-                //.placeholder(R.drawable.b8x)
                 .error(R.drawable.image_placeholder_error)
-                //.thumbnail(0.1f)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .listener(new MyImageRequestListener())
                 .into(imageView);
     }
     
