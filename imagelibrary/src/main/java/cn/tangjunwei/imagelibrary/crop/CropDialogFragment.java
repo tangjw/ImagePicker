@@ -2,6 +2,7 @@ package cn.tangjunwei.imagelibrary.crop;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -105,7 +106,10 @@ public class CropDialogFragment extends DialogFragment {
     
         ImageLoader imageLoader = ImagePicker.getInstance().getImageLoader();
         if (imageLoader != null) {
-            imageLoader.loadCropImage(this, mPath, zoomImageView);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(mPath, options);
+            imageLoader.loadCropImage(this, mPath, zoomImageView, options.outMimeType, options.outWidth, options.outHeight);
         } else {
             mOnImageSelectListener.onSelectFail("ImageLoader = null");
             closeSelf();

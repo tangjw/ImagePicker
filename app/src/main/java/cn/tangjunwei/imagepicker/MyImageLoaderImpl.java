@@ -46,14 +46,32 @@ public class MyImageLoaderImpl implements ImageLoader {
     }
     
     @Override
+    public void loadCropImage(Fragment fragment, String path, ImageView imageView, String mimeType, int width, int height) {
+        //image/png image/jpeg image/gif  gif 可以单独处理一下
+        System.out.println("ImageLoader MimeType: " + mimeType);
+        System.out.println("ImageLoader width: " + width);
+        System.out.println("ImageLoader height: " + height);
+        // 如果是超长或超宽图 压缩一下尺寸
+        // 不要设置任何占位图，计算缩放是以第一次加载的图片为准的
+        GlideApp.with(fragment)
+                .load(path)
+                .override(width * 1f / height > 3 || height * 1f / width > 3 ? 480 : 640)
+                .error(R.drawable.image_placeholder_error)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(imageView);
+    }
+    
+    @Override
     public void loadCropImage(FragmentActivity activity, String path, ImageView imageView) {
         System.out.println("loadCropImage: " + path);
         loadCropImage(GlideApp.with(activity), path, imageView);
     }
     
-    private void loadCropImage(GlideRequests glideRequests, String path, ImageView imageView){
+    private void loadCropImage(GlideRequests glideRequests, String path, ImageView imageView) {
         glideRequests
                 .load(path)
+        
                 .error(R.drawable.image_placeholder_error)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .transition(DrawableTransitionOptions.withCrossFade())
@@ -63,6 +81,7 @@ public class MyImageLoaderImpl implements ImageLoader {
     private void loadImage(GlideRequests glideRequests, String path, ImageView imageView) {
         glideRequests
                 .load(path)
+        
                 //.placeholder(R.drawable.image_placeholder)
                 .error(R.drawable.image_placeholder_error)
                 //.thumbnail(0.1f)
@@ -85,8 +104,8 @@ public class MyImageLoaderImpl implements ImageLoader {
         @Override
         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
             //System.out.println("onResourceReady isFirstResource: " + isFirstResource);
-           // System.out.println(dataSource);
-           // target.onResourceReady(resource, new DrawableCrossFadeTransition(1000, isFirstResource));
+            // System.out.println(dataSource);
+            // target.onResourceReady(resource, new DrawableCrossFadeTransition(1000, isFirstResource));
             return false;
         }
     }

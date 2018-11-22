@@ -37,7 +37,6 @@ public class ImagePicker implements Picker {
     
     @Override
     public void initListener(@NonNull FragmentActivity activity, @NonNull OnImageSelectListener onImageSelectListener) {
-        System.out.println("initListener CurrentState: " + mCurrentState);
         if (mCurrentState == null) return;
         switch (mCurrentState) {
             case "TAKE_PIC":
@@ -95,14 +94,12 @@ public class ImagePicker implements Picker {
     @Override
     public void takeAvatar(@NonNull FragmentActivity fragmentActivity, @Nullable CropOption cropOption, @NonNull OnImageSelectListener onImageSelectListener) {
         if (checkPermission(fragmentActivity, Manifest.permission.CAMERA, onImageSelectListener)) {
-            System.out.println("111111111111111111111");
             tryClearOldFragment(fragmentActivity);
             return;
         }
         FragmentManager fm = fragmentActivity.getSupportFragmentManager();
         CropDialogFragment cropFragment = (CropDialogFragment) fm.findFragmentByTag(CropDialogFragment.class.getSimpleName());
         if (cropFragment != null) {
-            System.out.println("22222222222222222222");
             cropFragment.setOnImageSelectListener(onImageSelectListener);
         }
         CoreFragment coreFragment = (CoreFragment) fm.findFragmentByTag(CoreFragment.class.getSimpleName());

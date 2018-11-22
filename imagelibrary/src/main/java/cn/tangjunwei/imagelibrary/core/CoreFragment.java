@@ -8,9 +8,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,14 +63,12 @@ public class CoreFragment extends Fragment {
     
     @Override
     public void onAttach(Context context) {
-        System.out.println("CoreFragment onAttach");
         super.onAttach(context);
         mActivity = (FragmentActivity) context;
     }
     
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        System.out.println("CoreFragment onCreate");
         if (savedInstanceState != null) {
             mCurrentState = savedInstanceState.getString("CurrentState");
             mCurrentPhotoPath = savedInstanceState.getString("CurrentPhotoPath");
@@ -100,12 +95,6 @@ public class CoreFragment extends Fragment {
         
     }
     
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        System.out.println("CoreFragment onCreateView");
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
     
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -142,45 +131,7 @@ public class CoreFragment extends Fragment {
     }
     
     @Override
-    public void onStart() {
-        System.out.println("CoreFragment onStart");
-        super.onStart();
-    }
-    
-    @Override
-    public void onResume() {
-        System.out.println("CoreFragment onResume");
-        super.onResume();
-    }
-    
-    @Override
-    public void onPause() {
-        System.out.println("CoreFragment onPause");
-        super.onPause();
-    }
-    
-    @Override
-    public void onStop() {
-        System.out.println("CoreFragment onStop");
-        super.onStop();
-    }
-    
-    @Override
-    public void onDestroyView() {
-        System.out.println("CoreFragment onDestroyView");
-        super.onDestroyView();
-    }
-    
-    @Override
-    public void onDetach() {
-        System.out.println("CoreFragment onDetach");
-        super.onDetach();
-    }
-    
-    @Override
-    
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        System.out.println("CoreFragment onSaveInstanceState");
         outState.putString("CurrentState", mCurrentState);
         outState.putString("CurrentPhotoPath", mCurrentPhotoPath);
         outState.putSerializable("ImageLoader", ImagePicker.getInstance().getImageLoader());
@@ -188,8 +139,6 @@ public class CoreFragment extends Fragment {
     
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    
-        System.out.println("onActivityResult");
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_TAKE_AVATAR:
