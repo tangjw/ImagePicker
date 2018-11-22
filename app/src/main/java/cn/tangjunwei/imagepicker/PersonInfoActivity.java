@@ -50,6 +50,12 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
         System.out.println("PersonInfoActivity onCreate end");
     }
     
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        System.out.println(TAG + " onSaveInstanceState");
+    }
+    
     @SuppressWarnings("all")
     private void showSelectAvatarDialog() {
         final BottomSheetDialog dialog = new BottomSheetDialog(PersonInfoActivity.this);
@@ -76,6 +82,7 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
                                         @Override
                                         public void hasPermission(List<String> granted, boolean isAll) {
                                             openAlbumAct();
+    
                                         }
                                         
                                         @Override
@@ -157,16 +164,6 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
     }
     
     private void checkFragment() {
-      /*  new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "find CoreFragment: " + getSupportFragmentManager().findFragmentByTag(CoreFragment.class.getSimpleName()));
-                CropDialogFragment fragment = (CropDialogFragment) getSupportFragmentManager().findFragmentByTag(CropDialogFragment.class.getSimpleName());
-                Log.d(TAG, "find CropDialogFragment: " + fragment);
-                if (fragment != null) {
-                    fragment.show(getSupportFragmentManager(), CropDialogFragment.class.getSimpleName());
-                }
-            }
-        }, 5000L);*/
+    
     }
 }

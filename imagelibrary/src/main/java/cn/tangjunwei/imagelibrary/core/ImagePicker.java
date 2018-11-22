@@ -105,7 +105,7 @@ public class ImagePicker implements Picker {
         CoreFragment coreFragment = (CoreFragment) fm.findFragmentByTag(CoreFragment.class.getSimpleName());
         if (coreFragment == null) {
             coreFragment = CoreFragment.newInstance(CoreType.TAKE_PIC_CROP, null, 1);
-            fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commit();
+            fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commitAllowingStateLoss();
         }
         coreFragment.setOnImageSelectListener(onImageSelectListener);
     }
@@ -120,7 +120,7 @@ public class ImagePicker implements Picker {
         CoreFragment coreFragment = (CoreFragment) fm.findFragmentByTag(CoreFragment.class.getSimpleName());
         if (coreFragment == null) {
             coreFragment = CoreFragment.newInstance(CoreType.SELECT_AVATAR, null, 1);
-            fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commit();
+            fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commitAllowingStateLoss();
         }
         coreFragment.setOnImageSelectListener(onImageSelectListener);
         
