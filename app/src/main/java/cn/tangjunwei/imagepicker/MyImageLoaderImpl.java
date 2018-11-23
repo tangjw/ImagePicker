@@ -71,7 +71,6 @@ public class MyImageLoaderImpl implements ImageLoader {
     private void loadCropImage(GlideRequests glideRequests, String path, ImageView imageView) {
         glideRequests
                 .load(path)
-        
                 .error(R.drawable.image_placeholder_error)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .transition(DrawableTransitionOptions.withCrossFade())
@@ -81,8 +80,7 @@ public class MyImageLoaderImpl implements ImageLoader {
     private void loadImage(GlideRequests glideRequests, String path, ImageView imageView) {
         glideRequests
                 .load(path)
-        
-                //.placeholder(R.drawable.image_placeholder)
+                .placeholder(R.drawable.image_placeholder)
                 .error(R.drawable.image_placeholder_error)
                 //.thumbnail(0.1f)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)

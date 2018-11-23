@@ -3,6 +3,7 @@ package cn.tangjunwei.imagepicker;
 import android.app.Application;
 
 import com.squareup.leakcanary.LeakCanary;
+import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * desc
@@ -22,5 +23,10 @@ public class App extends Application {
         }
         LeakCanary.install(this);
         // Normal app init code...
+    
+        //Bugly
+        // 2555ad7212
+        CrashReport.initCrashReport(getApplicationContext(), "2555ad7212", BuildConfig.DEBUG);
     }
+    
 }

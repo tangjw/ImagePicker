@@ -1,9 +1,11 @@
 package cn.tangjunwei.imagelibrary.core;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -32,15 +35,17 @@ import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
  * <a href="https://github.com/tangjw">Follow me</a>
  */
 public class CoreFragment extends Fragment {
-    private static final int REQUEST_TAKE_AVATAR = 101;
-    private static final int REQUEST_TAKE_IMAGE = 102;
-    private static final int REQUEST_SELECT_AVATAR = 103;
+    private static final int REQUEST_TAKE_AVATAR = 761;
+    private static final int REQUEST_TAKE_IMAGE = 762;
+    private static final int REQUEST_SELECT_AVATAR = 763;
+    private static final int REQUEST_PERMISSIONS_STORAGE = 764;
+    private static final int REQUEST_PERMISSIONS_CAMERA_STORAGE = 765;
     private Picker.OnImageSelectListener mOnImageSelectListener;
     private int mCoreType;
     private int mMaxCount;
     private CropOption mCropOption;
     private FragmentActivity mActivity;
-    private String mCurrentState;
+    private int mCurrentState;
     private String mCurrentPhotoPath;
     private boolean isConfigurationChanged;
     private boolean isReadyShowCropDialog;
@@ -70,7 +75,7 @@ public class CoreFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            mCurrentState = savedInstanceState.getString("CurrentState");
+            mCurrentState = savedInstanceState.getInt("CurrentState");
             mCurrentPhotoPath = savedInstanceState.getString("CurrentPhotoPath");
             ImageLoader imageLoader = (ImageLoader) savedInstanceState.getSerializable("ImageLoader");
             if (imageLoader != null) {
@@ -102,26 +107,23 @@ public class CoreFragment extends Fragment {
         if (mOnImageSelectListener == null) {
             closeSelf();
         }
-        if (mCurrentState != null) return; //从状态恢复 避免重复操作
+        if (mCurrentState != 0) return; //从状态恢复 避免重复操作
+        mCurrentState = mCoreType;
         switch (mCoreType) {
             case CoreType.TAKE_PIC:
-                takePic(REQUEST_TAKE_IMAGE);
-                mCurrentState = "TAKE_PIC";
+                checkCameraPermission(REQUEST_TAKE_IMAGE);
                 break;
             case CoreType.TAKE_PIC_CROP:
-                mCurrentState = "TAKE_PIC_CROP";
-                takePic(REQUEST_TAKE_AVATAR);
+                checkCameraPermission(REQUEST_TAKE_AVATAR);
                 break;
             case CoreType.SELECT_IMAGE:
-                mCurrentState = "SELECT_IMAGE";
                 //takePic();
                 break;
             case CoreType.SELECT_AVATAR:
-                mCurrentState = "SELECT_AVATAR";
                 selectAvatar();
                 break;
             default://什么也不做直接关闭
-                mCurrentState = null;
+                mCurrentState = 0;
                 closeSelf();
                 break;
         }
@@ -130,9 +132,19 @@ public class CoreFragment extends Fragment {
         
     }
     
+    private void checkCameraPermission(int requestCode) {
+        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            takePic(requestCode);
+        } else {
+            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS_CAMERA_STORAGE);
+        }
+        
+    }
+    
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString("CurrentState", mCurrentState);
+        outState.putInt("CurrentState", mCurrentState);
         outState.putString("CurrentPhotoPath", mCurrentPhotoPath);
         outState.putSerializable("ImageLoader", ImagePicker.getInstance().getImageLoader());
     }
@@ -163,7 +175,7 @@ public class CoreFragment extends Fragment {
                     break;
             }
         } else {
-            mOnImageSelectListener.onSelectFail("resultCode != RESULT_OK");
+            mOnImageSelectListener.onSelectFail("cancel");
             closeSelf();
         }
     
@@ -177,7 +189,58 @@ public class CoreFragment extends Fragment {
     
     
     private void selectAvatar() {
+        
+        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS_STORAGE);
+        } else {
+            startAlbumActivity();
+        }
+        
+        
+    }
+    
+    private void startAlbumActivity() {
         startActivityForResult(new Intent(mActivity, AlbumActivity.class), REQUEST_SELECT_AVATAR);
+    }
+    
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS_STORAGE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startAlbumActivity();
+                } else {
+                    mOnImageSelectListener.onSelectFail(Manifest.permission.WRITE_EXTERNAL_STORAGE + " is Denied!");
+                    closeSelf();
+                    
+                }
+                break;
+            case REQUEST_PERMISSIONS_CAMERA_STORAGE:
+                if (grantResults.length > 0) {
+                    
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                            mOnImageSelectListener.onSelectFail(permissions[i] + " is Denied!");
+                            closeSelf();
+                            return;
+                        }
+                    }
+                    if (mCoreType == CoreType.TAKE_PIC_CROP) {
+                        mCurrentState = CoreType.TAKE_PIC_CROP;
+                        takePic(REQUEST_TAKE_AVATAR);
+                    } else if (mCoreType == CoreType.TAKE_PIC) {
+                        mCurrentState = CoreType.TAKE_PIC;
+                        takePic(REQUEST_TAKE_IMAGE);
+                    }
+                    
+                } else {
+                    mOnImageSelectListener.onSelectFail("permission denied");
+                    closeSelf();
+                }
+                break;
+            
+        }
     }
     
     @Override
@@ -218,7 +281,7 @@ public class CoreFragment extends Fragment {
     }
     
     private void closeSelf() {
-        ImagePicker.getInstance().setCurrentState(null);
+        ImagePicker.getInstance().setCurrentState(0);
         mActivity.getSupportFragmentManager().beginTransaction().remove(this).commit();
     }
     

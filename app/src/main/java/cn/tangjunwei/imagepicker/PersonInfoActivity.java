@@ -1,17 +1,13 @@
 package cn.tangjunwei.imagepicker;
 
-import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.hjq.permissions.OnPermission;
-import com.hjq.permissions.XXPermissions;
 
 import java.util.Arrays;
-import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -73,25 +69,7 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
                     @Override
                     public void onClick(View v) {
                         dialog.cancel();
-                        if (XXPermissions.isHasPermission(PersonInfoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                            openAlbumAct();
-                        } else {
-                            XXPermissions.with(PersonInfoActivity.this)
-                                    .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                    .request(new OnPermission() {
-                                        @Override
-                                        public void hasPermission(List<String> granted, boolean isAll) {
-                                            openAlbumAct();
-    
-                                        }
-                                        
-                                        @Override
-                                        public void noPermission(List<String> denied, boolean quick) {
-                                            System.out.println("STORAGE denied: ");
-                                        }
-                                    });
-                        }
-                        
+                        openAlbumAct();
                     }
                 });
         
@@ -100,24 +78,7 @@ public class PersonInfoActivity extends AppCompatActivity implements Picker.OnIm
                     @Override
                     public void onClick(View v) {
                         dialog.cancel();
-                        
-                        if (XXPermissions.isHasPermission(PersonInfoActivity.this, Manifest.permission.CAMERA)) {
-                            openCamera();
-                        } else {
-                            XXPermissions.with(PersonInfoActivity.this)
-                                    .permission(Manifest.permission.CAMERA)
-                                    .request(new OnPermission() {
-                                        @Override
-                                        public void hasPermission(List<String> granted, boolean isAll) {
-                                            openCamera();
-                                        }
-                                        
-                                        @Override
-                                        public void noPermission(List<String> denied, boolean quick) {
-                                            System.out.println("CAMERA denied: ");
-                                        }
-                                    });
-                        }
+                        openCamera();
                     }
                 });
         dialog.show();

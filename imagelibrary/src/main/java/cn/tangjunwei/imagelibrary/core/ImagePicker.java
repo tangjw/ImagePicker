@@ -1,11 +1,7 @@
 package cn.tangjunwei.imagelibrary.core;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import cn.tangjunwei.imagelibrary.ImageLoader;
@@ -22,7 +18,7 @@ public class ImagePicker implements Picker {
     
     private ImageLoader mImageLoader;
     
-    private String mCurrentState;
+    private int mCurrentState;
     
     private ImagePicker() {
     }
@@ -31,23 +27,23 @@ public class ImagePicker implements Picker {
         return SingletonHolder.INSTANCE;
     }
     
-    public void setCurrentState(String currentState) {
+    public void setCurrentState(int currentState) {
         mCurrentState = currentState;
     }
     
     @Override
     public void initListener(@NonNull FragmentActivity activity, @NonNull OnImageSelectListener onImageSelectListener) {
-        if (mCurrentState == null) return;
+        if (mCurrentState == 0) return;
         switch (mCurrentState) {
-            case "TAKE_PIC":
+            case CoreType.TAKE_PIC:
                 takePicture(activity, onImageSelectListener);
                 break;
-            case "TAKE_PIC_CROP":
+            case CoreType.TAKE_PIC_CROP:
                 takeAvatar(activity, null, onImageSelectListener);
                 break;
-            case "SELECT_IMAGE":
+            case CoreType.SELECT_IMAGE:
                 break;
-            case "SELECT_AVATAR":
+            case CoreType.SELECT_AVATAR:
                 selectAvatar(activity, null, onImageSelectListener);
                 break;
             default:
@@ -67,15 +63,12 @@ public class ImagePicker implements Picker {
     
     @Override
     public void takePicture(@NonNull FragmentActivity fragmentActivity, @NonNull OnImageSelectListener onImageSelectListener) {
-        if (checkPermission(fragmentActivity, Manifest.permission.CAMERA, onImageSelectListener)
-                || checkPermission(fragmentActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE, onImageSelectListener)) {
-            return;
-        }
+    
         FragmentManager fm = fragmentActivity.getSupportFragmentManager();
         CoreFragment coreFragment = (CoreFragment) fm.findFragmentByTag(CoreFragment.class.getSimpleName());
         if (coreFragment == null) {
             coreFragment = CoreFragment.newInstance(CoreType.TAKE_PIC, null, 1);
-            fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commit();
+            fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commitAllowingStateLoss();
         }
         coreFragment.setOnImageSelectListener(onImageSelectListener);
         
@@ -93,10 +86,7 @@ public class ImagePicker implements Picker {
     
     @Override
     public void takeAvatar(@NonNull FragmentActivity fragmentActivity, @Nullable CropOption cropOption, @NonNull OnImageSelectListener onImageSelectListener) {
-        if (checkPermission(fragmentActivity, Manifest.permission.CAMERA, onImageSelectListener)) {
-            tryClearOldFragment(fragmentActivity);
-            return;
-        }
+    
         FragmentManager fm = fragmentActivity.getSupportFragmentManager();
         CropDialogFragment cropFragment = (CropDialogFragment) fm.findFragmentByTag(CropDialogFragment.class.getSimpleName());
         if (cropFragment != null) {
@@ -129,23 +119,6 @@ public class ImagePicker implements Picker {
     private boolean checkImageLoader(@NonNull OnImageSelectListener onImageSelectListener) {
         if (mImageLoader == null) {
             onImageSelectListener.onSelectFail("please init ImageLoader first!");
-            return true;
-        }
-        return false;
-    }
-    
-    /**
-     * 检查权限
-     *
-     * @param fragmentActivity
-     * @param permission
-     * @param onImageSelectListener
-     * @return
-     */
-    private boolean checkPermission(@NonNull FragmentActivity fragmentActivity, @NonNull String permission, @NonNull OnImageSelectListener onImageSelectListener) {
-        if (ContextCompat.checkSelfPermission(fragmentActivity, permission) != PackageManager.PERMISSION_GRANTED) {
-            onImageSelectListener.onSelectFail(permission + " is Denied!");
-            tryClearOldFragment(fragmentActivity);
             return true;
         }
         return false;

@@ -275,13 +275,20 @@ public class ClipZoomImageView extends AppCompatImageView implements
         float scaleHeight = ((float) outHeight) / width;
         // 缩放图片动作  
         matrix.postScale(scaleWidth, scaleHeight);
-        
+        int y = mVerticalPadding;
+        if (y < 0) { //特殊情况 应用分屏时出现
+            y = 0;
+        }
+        int height = width;
+        if (y + height > bitmap.getHeight()) {
+            height = bitmap.getHeight() - y;
+        }
         
         return Bitmap.createBitmap(
                 bitmap,
                 mHorizontalPadding,
-                mVerticalPadding, width,
-                width, matrix, true);
+                y, width,
+                height, matrix, true);
     }
     
     /**
