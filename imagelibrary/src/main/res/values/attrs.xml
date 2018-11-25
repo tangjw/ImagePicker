@@ -12,4 +12,20 @@
         <attr name="ratio_width" format="float"/>
         <attr name="ratio_height" format="float"/>
     </declare-styleable>
+    <declare-styleable name="SmoothCheckBox">
+        <attr name="duration" format="integer"/>
+        <attr name="stroke_width" format="dimension"/>
+        <attr name="color_tick" format="color"/>
+        <attr name="color_checked1" format="color"/>
+        <attr name="color_unchecked1" format="color"/>
+        <attr name="color_unchecked_stroke" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="MyCheckableView">
+        <attr name="circle_width" format="dimension"/>
+        <attr name="color_unchecked" format="color"/>
+        <attr name="color_checked" format="color"/>
+        <attr name="tick_width" format="dimension"/>
+        <attr name="tick_color" format="color"/>
+    </declare-styleable>
 </resources>

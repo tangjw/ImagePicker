@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class ImageSelectAdapter extends BaseAdapter {
             
             viewHolder = new ViewHolder();
             viewHolder.imageView = convertView.findViewById(R.id.image_view_image_select);
-            viewHolder.view = convertView.findViewById(R.id.view_alpha);
+            viewHolder.tvType = convertView.findViewById(R.id.tv_image_type);
             convertView.setTag(viewHolder);
             
         } else {
@@ -59,18 +60,26 @@ public class ImageSelectAdapter extends BaseAdapter {
         }
         
         if (mList.get(position).isSelected) {
-            viewHolder.view.setAlpha(0.5f);
+            // viewHolder.view.setAlpha(0.5f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // convertView.setForeground(context.getDrawable(R.drawable.ic_done_white));
             }
         } else {
-            viewHolder.view.setAlpha(0.0f);
+            //viewHolder.view.setAlpha(0.0f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 convertView.setForeground(null);
             }
         }
+    
+        String path = mList.get(position).path;
+        if (path.endsWith(".gif")) {
+            viewHolder.tvType.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.tvType.setVisibility(View.GONE);
+        }
+        
         if (mImageLoader != null) {
-            mImageLoader.loadImage(context, mList.get(position).path, viewHolder.imageView);
+            mImageLoader.loadImage(context, path, viewHolder.imageView);
         }
         
         return convertView;
@@ -78,6 +87,6 @@ public class ImageSelectAdapter extends BaseAdapter {
     
     private static class ViewHolder {
         ImageView imageView;
-        View view;
+        TextView tvType;
     }
 }
