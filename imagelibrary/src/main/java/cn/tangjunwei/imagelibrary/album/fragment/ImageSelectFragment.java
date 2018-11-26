@@ -1,7 +1,7 @@
 package cn.tangjunwei.imagelibrary.album.fragment;
 
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.util.LongSparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -40,7 +40,7 @@ import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Picker.OnImageSelectListener, AdapterView.OnItemClickListener {
+public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Picker.OnImageSelectListener, AdapterView.OnItemClickListener, ImageSelectAdapter.OnCheckedImageChangeListener {
     
     private final static String ARG_PARAM1 = "ImageLoader";
     
@@ -63,6 +63,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     private int mMaxCount;
     private int mCropSize;
     private CropDialogFragment mCropDialogFragment;
+    private LongSparseArray<ImageBean> mSparseArray;
     
     
     public static ImageSelectFragment newInstance(int maxCount, @Nullable CropOption cropOption) {
@@ -119,7 +120,6 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
         
         mPresenter.loadAllImage(mActivity);
     
-    
         mTvSelectAlbum.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -129,7 +129,6 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
             }
         });
     
-    
         mGridView.setOnItemClickListener(this);
     }
     
@@ -138,10 +137,6 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
         outState.putSerializable("ImageLoader", ImagePicker.getInstance().getImageLoader());
     }
     
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-    }
     
     @Override
     public void showLoadingView() {
@@ -181,7 +176,8 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     public void showImage(List<ImageBean> list) {
         mList = list;
         if (mAdapter == null) {
-            mAdapter = new ImageSelectAdapter(list, mImageLoader);
+            mAdapter = new ImageSelectAdapter(list, mImageLoader, mMaxCount);
+            mAdapter.setListener(this);
             mGridView.setAdapter(mAdapter);
         } else {
             mAdapter.refreshData(list);
@@ -255,10 +251,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     }
     
     private int getScreenHeight() {
-        DisplayMetrics dm = new DisplayMetrics();
-        mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        
-        return dm.heightPixels;
+        return getResources().getDisplayMetrics().heightPixels;
     }
     
     @Override
@@ -278,17 +271,29 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        FragmentManager fm = mActivity.getSupportFragmentManager();
-        CropDialogFragment fragment = (CropDialogFragment) fm.findFragmentByTag(CropDialogFragment.class.getSimpleName());
+        if (mMaxCount > 0) {
+            // TODO: 2018/11/26 预览 
+            for (int i = 0; i < mSparseArray.size(); i++) {
+                System.out.println(mSparseArray.valueAt(i).getName());
+            }
+        } else {
         
-        if (fragment != null) {
-            fragment.dismissAllowingStateLoss();
+            FragmentManager fm = mActivity.getSupportFragmentManager();
+            CropDialogFragment fragment = (CropDialogFragment) fm.findFragmentByTag(CropDialogFragment.class.getSimpleName());
+        
+            if (fragment != null) {
+                fragment.dismissAllowingStateLoss();
+            }
+            fragment = CropDialogFragment.newInstance(mList.get(position).getPath(), mCropOption.getWith());
+            fragment.setOnImageSelectListener((Picker.OnImageSelectListener) mActivity);
+            fragment.show(fm, CropDialogFragment.class.getSimpleName());
         }
-        fragment = CropDialogFragment.newInstance(mList.get(position).getPath(), mCropOption.getWith());
-        fragment.setOnImageSelectListener((Picker.OnImageSelectListener) mActivity);
-        fragment.show(fm, CropDialogFragment.class.getSimpleName());
-        
     }
     
     
+    @Override
+    public void onCheckedImageChange(LongSparseArray<ImageBean> sparseArray) {
+        mSparseArray = sparseArray;
+        
+    }
 }

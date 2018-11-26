@@ -1,5 +1,6 @@
 package cn.tangjunwei.imagelibrary.core;
 
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -63,7 +64,6 @@ public class ImagePicker implements Picker {
     
     @Override
     public void takePicture(@NonNull FragmentActivity fragmentActivity, @NonNull OnImageSelectListener onImageSelectListener) {
-    
         FragmentManager fm = fragmentActivity.getSupportFragmentManager();
         CoreFragment coreFragment = (CoreFragment) fm.findFragmentByTag(CoreFragment.class.getSimpleName());
         if (coreFragment == null) {
@@ -71,17 +71,21 @@ public class ImagePicker implements Picker {
             fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commitAllowingStateLoss();
         }
         coreFragment.setOnImageSelectListener(onImageSelectListener);
-        
-        
     }
     
     @Override
-    public void selectPicture(@NonNull FragmentActivity fragmentActivity, int maxCount, @NonNull OnImageSelectListener onImageSelectListener) {
+    public void selectPicture(@NonNull FragmentActivity fragmentActivity, @IntRange(from = 1, to = 9) int maxCount, @NonNull OnImageSelectListener onImageSelectListener) {
         if (checkImageLoader(onImageSelectListener)) {
             tryClearOldFragment(fragmentActivity);
             return;
         }
-    
+        FragmentManager fm = fragmentActivity.getSupportFragmentManager();
+        CoreFragment coreFragment = (CoreFragment) fm.findFragmentByTag(CoreFragment.class.getSimpleName());
+        if (coreFragment == null) {
+            coreFragment = CoreFragment.newInstance(CoreType.SELECT_IMAGE, null, maxCount);
+            fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commitAllowingStateLoss();
+        }
+        coreFragment.setOnImageSelectListener(onImageSelectListener);
     }
     
     @Override
@@ -94,7 +98,7 @@ public class ImagePicker implements Picker {
         }
         CoreFragment coreFragment = (CoreFragment) fm.findFragmentByTag(CoreFragment.class.getSimpleName());
         if (coreFragment == null) {
-            coreFragment = CoreFragment.newInstance(CoreType.TAKE_PIC_CROP, null, 1);
+            coreFragment = CoreFragment.newInstance(CoreType.TAKE_PIC_CROP, cropOption, 1);
             fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commitAllowingStateLoss();
         }
         coreFragment.setOnImageSelectListener(onImageSelectListener);
@@ -109,7 +113,7 @@ public class ImagePicker implements Picker {
         FragmentManager fm = fragmentActivity.getSupportFragmentManager();
         CoreFragment coreFragment = (CoreFragment) fm.findFragmentByTag(CoreFragment.class.getSimpleName());
         if (coreFragment == null) {
-            coreFragment = CoreFragment.newInstance(CoreType.SELECT_AVATAR, null, 1);
+            coreFragment = CoreFragment.newInstance(CoreType.SELECT_AVATAR, cropOption, 1);
             fm.beginTransaction().add(coreFragment, CoreFragment.class.getSimpleName()).commitAllowingStateLoss();
         }
         coreFragment.setOnImageSelectListener(onImageSelectListener);

@@ -25,18 +25,9 @@
     </androidx.appcompat.widget.Toolbar>
 
 
-    <cn.tangjunwei.imagelibrary.widget.MyCheckableView
-        android:id="@+id/cb_smooth"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:background="#CCC"
-        android:padding="4dp"/>
-
-    <cn.tangjunwei.imagelibrary.widget.SmoothCheckBox
-        android:id="@+id/cb_smooth1"
-        android:layout_width="164dp"
-        android:layout_height="164dp"
-        android:background="#CCC"
-        android:padding="14dp"/>
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

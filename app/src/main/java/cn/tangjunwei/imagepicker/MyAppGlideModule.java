@@ -28,12 +28,9 @@ public class MyAppGlideModule extends AppGlideModule {
     
     @Override
     public void applyOptions(@NonNull Context context, @NonNull GlideBuilder builder) {
-        builder.setDefaultRequestOptions(new RequestOptions() {
-            
-        });
-        
-        
-        RequestOptions requestOptions = RequestOptions.formatOf(DecodeFormat.PREFER_ARGB_8888);
+    
+        builder.setDefaultRequestOptions(RequestOptions.formatOf(DecodeFormat.PREFER_RGB_565));
+        // RequestOptions requestOptions = RequestOptions.formatOf(DecodeFormat.PREFER_ARGB_8888);
         
         
     }

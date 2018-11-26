@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import cn.tangjunwei.imagelibrary.ImageLoader;
 import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.fragment.ImageSelectFragment;
+import cn.tangjunwei.imagelibrary.core.CropOption;
 import cn.tangjunwei.imagelibrary.core.ImagePicker;
 import cn.tangjunwei.imagelibrary.core.Picker;
 import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
@@ -41,12 +42,15 @@ public class AlbumActivity extends AppCompatActivity implements Picker.OnImageSe
         }
         
         setContentView(R.layout.activity_album);
-        
+    
+        int maxCount = getIntent().getIntExtra("MaxCount", 0);
+        CropOption cropOption = (CropOption) getIntent().getSerializableExtra("CropOption");
+    
         FragmentManager fragmentManager = getSupportFragmentManager();
         
         ImageSelectFragment fragment = (ImageSelectFragment) fragmentManager.findFragmentByTag(ImageSelectFragment.class.getSimpleName());
         if (fragment == null) {
-            fragment = ImageSelectFragment.newInstance(1, null);
+            fragment = ImageSelectFragment.newInstance(maxCount, cropOption);
         }
         fragmentManager.beginTransaction()
                 .replace(R.id.fl_container, fragment, ImageSelectFragment.class.getSimpleName())

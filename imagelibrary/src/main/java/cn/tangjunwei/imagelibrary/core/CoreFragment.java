@@ -38,8 +38,9 @@ public class CoreFragment extends Fragment {
     private static final int REQUEST_TAKE_AVATAR = 761;
     private static final int REQUEST_TAKE_IMAGE = 762;
     private static final int REQUEST_SELECT_AVATAR = 763;
-    private static final int REQUEST_PERMISSIONS_STORAGE = 764;
-    private static final int REQUEST_PERMISSIONS_CAMERA_STORAGE = 765;
+    private static final int REQUEST_SELECT_IMAGE = 764;
+    private static final int REQUEST_PERMISSIONS_STORAGE = 765;
+    private static final int REQUEST_PERMISSIONS_CAMERA_STORAGE = 766;
     private Picker.OnImageSelectListener mOnImageSelectListener;
     private int mCoreType;
     private int mMaxCount;
@@ -47,8 +48,6 @@ public class CoreFragment extends Fragment {
     private FragmentActivity mActivity;
     private int mCurrentState;
     private String mCurrentPhotoPath;
-    private boolean isConfigurationChanged;
-    private boolean isReadyShowCropDialog;
     private boolean hasCaptured;
     
     static CoreFragment newInstance(int type, CropOption cropOption, int maxCount) {
@@ -83,7 +82,6 @@ public class CoreFragment extends Fragment {
             } else {
                 closeSelf();
             }
-            
             ImagePicker.getInstance().setCurrentState(mCurrentState);
         }
         super.onCreate(savedInstanceState);
@@ -117,7 +115,7 @@ public class CoreFragment extends Fragment {
                 checkCameraPermission(REQUEST_TAKE_AVATAR);
                 break;
             case CoreType.SELECT_IMAGE:
-                //takePic();
+                selectImage();
                 break;
             case CoreType.SELECT_AVATAR:
                 selectAvatar();
@@ -130,6 +128,15 @@ public class CoreFragment extends Fragment {
         
         ImagePicker.getInstance().setCurrentState(mCurrentState);
         
+    }
+    
+    private void selectImage() {
+        
+        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS_STORAGE);
+        } else {
+            startAlbumActivityForImage();
+        }
     }
     
     private void checkCameraPermission(int requestCode) {
@@ -189,18 +196,23 @@ public class CoreFragment extends Fragment {
     
     
     private void selectAvatar() {
-        
         if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS_STORAGE);
         } else {
-            startAlbumActivity();
+            startAlbumActivityForAvatar();
         }
-        
-        
     }
     
-    private void startAlbumActivity() {
-        startActivityForResult(new Intent(mActivity, AlbumActivity.class), REQUEST_SELECT_AVATAR);
+    private void startAlbumActivityForAvatar() {
+        Intent intent = new Intent(mActivity, AlbumActivity.class);
+        intent.putExtra("CropOption", mCropOption);
+        startActivityForResult(intent, REQUEST_SELECT_AVATAR);
+    }
+    
+    private void startAlbumActivityForImage() {
+        Intent intent = new Intent(mActivity, AlbumActivity.class);
+        intent.putExtra("MaxCount", mMaxCount);
+        startActivityForResult(intent, REQUEST_SELECT_IMAGE);
     }
     
     @Override
@@ -209,16 +221,19 @@ public class CoreFragment extends Fragment {
             case REQUEST_PERMISSIONS_STORAGE:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startAlbumActivity();
+                    if (mCoreType == CoreType.SELECT_AVATAR) {
+                        startAlbumActivityForAvatar();
+                    }
+                    if (mCoreType == CoreType.SELECT_IMAGE) {
+                        startAlbumActivityForImage();
+                    }
                 } else {
                     mOnImageSelectListener.onSelectFail(Manifest.permission.WRITE_EXTERNAL_STORAGE + " is Denied!");
                     closeSelf();
-                    
                 }
                 break;
             case REQUEST_PERMISSIONS_CAMERA_STORAGE:
                 if (grantResults.length > 0) {
-                    
                     for (int i = 0; i < grantResults.length; i++) {
                         if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                             mOnImageSelectListener.onSelectFail(permissions[i] + " is Denied!");
@@ -233,7 +248,6 @@ public class CoreFragment extends Fragment {
                         mCurrentState = CoreType.TAKE_PIC;
                         takePic(REQUEST_TAKE_IMAGE);
                     }
-                    
                 } else {
                     mOnImageSelectListener.onSelectFail("permission denied");
                     closeSelf();

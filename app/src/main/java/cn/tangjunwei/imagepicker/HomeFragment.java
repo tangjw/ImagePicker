@@ -8,9 +8,11 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import cn.tangjunwei.imagelibrary.core.ImagePicker;
+import cn.tangjunwei.imagelibrary.core.Picker;
 
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements Picker.OnImageSelectListener {
     
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -38,6 +40,11 @@ public class HomeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        if (savedInstanceState != null) {
+            System.out.println("PersonInfoActivity savedInstanceState != null");
+            ImagePicker.getInstance().initListener(getActivity(), this);
+        }
+        ImagePicker.getInstance().initImageLoader(new MyImageLoaderImpl());
     }
     
     @Override
@@ -51,12 +58,32 @@ public class HomeFragment extends Fragment {
                 startActivity(new Intent(getContext(), PostActivity.class));
             }
         });
-    
+        view.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImagePicker.getInstance().selectPicture(getActivity(), 9, HomeFragment.this);
+            }
+        });
         return view;
     }
     
     @Override
     public void onHiddenChanged(boolean hidden) {
         System.out.println("home: " + (hidden ? "invisible" : "visible"));
+    }
+    
+    @Override
+    public void onSelectSuccess(String avatarPath) {
+        
+    }
+    
+    @Override
+    public void onSelectSuccess(String[] paths) {
+        
+    }
+    
+    @Override
+    public void onSelectFail(String msg) {
+        
     }
 }
