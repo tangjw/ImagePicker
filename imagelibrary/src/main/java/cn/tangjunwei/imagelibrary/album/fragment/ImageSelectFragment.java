@@ -284,7 +284,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
         if (fragment != null) {
             fragment.dismissAllowingStateLoss();
         }
-        fragment = CropDialogFragment.newInstance(mList.get(position).path, mCropOption.getWith());
+        fragment = CropDialogFragment.newInstance(mList.get(position).getPath(), mCropOption.getWith());
         fragment.setOnImageSelectListener((Picker.OnImageSelectListener) mActivity);
         fragment.show(fm, CropDialogFragment.class.getSimpleName());
         

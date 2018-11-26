@@ -1,42 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cn.tangjunwei.imagelibrary.widget.RatioFrameLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="1dp"
-    app:ratio_height="1"
-    app:ratio_width="1">
+    >
 
-
-    <ImageView
-        android:id="@+id/image_view_image_select"
+    <cn.tangjunwei.imagelibrary.widget.RatioFrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#484848"
-        android:scaleType="centerCrop"/>
+        android:padding="1dp"
+        app:ratio_height="1"
+        app:ratio_width="1">
 
-    <cn.tangjunwei.imagelibrary.widget.SmoothCheckBox
-        android:id="@+id/cb_smooth"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="end|top"
-        android:padding="4dp"
-        app:color_checked="?attr/colorAccent"
-        app:color_unchecked_stroke="#fff"
-        app:stroke_width="1dp"/>
 
-    <TextView
-        android:id="@+id/tv_image_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|bottom"
-        android:fontFamily="cursive"
-        android:paddingStart="8dp"
-        android:paddingBottom="4dp"
-        android:text="GIF"
-        android:textColor="#FFF"
-        android:textSize="10dp"
-        android:textStyle="bold"/>
+        <ImageView
+            android:id="@+id/image_view_image_select"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#484848"
+            android:scaleType="centerCrop"/>
 
-</cn.tangjunwei.imagelibrary.widget.RatioFrameLayout>
+        <cn.tangjunwei.imagelibrary.widget.MyCheckableView
+            android:id="@+id/cv_index"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="end|top"
+            android:padding="6dp"
+            app:color_checked="?attr/colorAccent"/>
+
+        <TextView
+            android:id="@+id/tv_image_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            android:fontFamily="cursive"
+            android:paddingStart="8dp"
+            android:paddingBottom="4dp"
+            android:text="GIF"
+            android:textColor="#FFF"
+            android:textSize="10dp"
+            android:textStyle="bold"/>
+
+    </cn.tangjunwei.imagelibrary.widget.RatioFrameLayout>
+</FrameLayout>

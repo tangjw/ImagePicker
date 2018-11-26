@@ -25,7 +25,5 @@
         <attr name="circle_width" format="dimension"/>
         <attr name="color_unchecked" format="color"/>
         <attr name="color_checked" format="color"/>
-        <attr name="tick_width" format="dimension"/>
-        <attr name="tick_color" format="color"/>
     </declare-styleable>
 </resources>

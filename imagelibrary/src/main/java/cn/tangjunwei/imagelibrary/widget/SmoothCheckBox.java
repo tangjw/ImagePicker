@@ -18,12 +18,10 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Checkable;
 
-import java.util.Arrays;
-
 import cn.tangjunwei.imagelibrary.R;
 
 
-public class SmoothCheckBox extends View implements Checkable, View.OnClickListener {
+public class SmoothCheckBox extends View implements Checkable {
     private static final String KEY_INSTANCE_STATE = "InstanceState";
     
     private static final int COLOR_TICK = Color.WHITE;
@@ -43,12 +41,11 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
     private float mLeftLineDistance, mRightLineDistance, mDrewDistance;
     private float mScaleVal = 1.0f, mFloorScale = 1.0f;
     private int mWidth, mAnimDuration, mStrokeWidth;
-    private int mCheckedColor, mUnCheckedColor, mNormalColor, mFloorUnCheckedColor;
+    private int mCheckedColor, mUnCheckedColor, mFloorColor, mFloorUnCheckedColor;
     
     private boolean mChecked;
     private boolean mTickDrawing;
     private OnCheckedChangeListener mListener;
-    private Paint mUnCheckedPaint;
     
     public SmoothCheckBox(Context context) {
         this(context, null);
@@ -74,31 +71,21 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
         TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.SmoothCheckBox);
         int tickColor = ta.getColor(R.styleable.SmoothCheckBox_color_tick, COLOR_TICK);
         mAnimDuration = ta.getInt(R.styleable.SmoothCheckBox_duration, DEF_ANIM_DURATION);
-        mNormalColor = ta.getColor(R.styleable.SmoothCheckBox_color_unchecked_stroke, COLOR_FLOOR_UNCHECKED);
+        mFloorColor = ta.getColor(R.styleable.SmoothCheckBox_color_unchecked_stroke, COLOR_FLOOR_UNCHECKED);
         mCheckedColor = ta.getColor(R.styleable.SmoothCheckBox_color_checked1, COLOR_CHECKED);
-        
-        mUnCheckedColor = ta.getColor(R.styleable.SmoothCheckBox_color_unchecked1, Color.WHITE);
-        
-        mStrokeWidth = ta.getDimensionPixelSize(R.styleable.SmoothCheckBox_stroke_width, 1);
-        
+        mUnCheckedColor = ta.getColor(R.styleable.SmoothCheckBox_color_unchecked1, COLOR_UNCHECKED);
+        mStrokeWidth = ta.getDimensionPixelSize(R.styleable.SmoothCheckBox_stroke_width, dp2px(0));
         ta.recycle();
-        
-        mUnCheckedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mUnCheckedPaint.setStrokeWidth(mStrokeWidth);
-        mUnCheckedPaint.setStyle(Paint.Style.STROKE);
-        mUnCheckedPaint.setStrokeCap(Paint.Cap.ROUND);
-        mUnCheckedPaint.setColor(mUnCheckedColor);
-        
-        mFloorUnCheckedColor = mNormalColor;
+    
+        mFloorUnCheckedColor = mFloorColor;
         mTickPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTickPaint.setStyle(Paint.Style.STROKE);
         mTickPaint.setStrokeCap(Paint.Cap.ROUND);
         mTickPaint.setColor(tickColor);
-        mTickPaint.setColor(tickColor);
         
         mFloorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFloorPaint.setStyle(Paint.Style.FILL);
-        mFloorPaint.setColor(mNormalColor);
+        mFloorPaint.setColor(mFloorColor);
         
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
@@ -106,26 +93,24 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
         
         mTickPath = new Path();
         mCenterPoint = new Point();
-        mTickPoints = new Point[]{new Point(), new Point(), new Point()};
-        
-        setOnClickListener(this);
-    }
+        mTickPoints = new Point[3];
+        mTickPoints[0] = new Point();
+        mTickPoints[1] = new Point();
+        mTickPoints[2] = new Point();
     
-    @Override
-    public void onClick(View v) {
-       /* toggle();
-        mTickDrawing = false;
-        mDrewDistance = 0;
-        if (isChecked()) {
-            startCheckedAnimation();
-        } else {
-            startUnCheckedAnimation();
-        }*/
-    }
-    
-    public int dp2px(float dipValue) {
-        final float scale = Resources.getSystem().getDisplayMetrics().density;
-        return (int) (dipValue * scale + 0.5f);
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggle();
+                mTickDrawing = false;
+                mDrewDistance = 0;
+                if (isChecked()) {
+                    startCheckedAnimation();
+                } else {
+                    startUnCheckedAnimation();
+                }
+            }
+        });
     }
     
     @Override
@@ -154,6 +139,11 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
     }
     
     @Override
+    public void toggle() {
+        this.setChecked(!isChecked());
+    }
+    
+    @Override
     public void setChecked(boolean checked) {
         mChecked = checked;
         reset();
@@ -163,15 +153,8 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
         }
     }
     
-    @Override
-    public void toggle() {
-        System.out.println("toggle---------------");
-        //this.setChecked(!isChecked());
-    }
-    
     /**
      * checked with animation
-     *
      * @param checked checked
      * @param animate change with animation
      */
@@ -198,26 +181,50 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
         mTickDrawing = true;
         mFloorScale = 1.0f;
         mScaleVal = isChecked() ? 0f : 1.0f;
-        mNormalColor = isChecked() ? mCheckedColor : mFloorUnCheckedColor;
+        mFloorColor = isChecked() ? mCheckedColor : mFloorUnCheckedColor;
         mDrewDistance = isChecked() ? (mLeftLineDistance + mRightLineDistance) : 0;
+    }
+    
+    private int measureSize(int measureSpec) {
+        int defSize = dp2px(DEF_DRAW_SIZE);
+        int specSize = MeasureSpec.getSize(measureSpec);
+        int specMode = MeasureSpec.getMode(measureSpec);
+        
+        int result = 0;
+        switch (specMode) {
+            case MeasureSpec.UNSPECIFIED:
+            case MeasureSpec.AT_MOST:
+                result = Math.min(defSize, specSize);
+                break;
+            case MeasureSpec.EXACTLY:
+                result = specSize;
+                break;
+        }
+        return result;
+    }
+    
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(measureSize(widthMeasureSpec), measureSize(heightMeasureSpec));
     }
     
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        mWidth = getWidth();
-        int height = getHeight();
+        mWidth = getMeasuredWidth();
+        mStrokeWidth = (mStrokeWidth == 0 ? getMeasuredWidth() / 10 : mStrokeWidth);
+        mStrokeWidth = mStrokeWidth > getMeasuredWidth() / 5 ? getMeasuredWidth() / 5 : mStrokeWidth;
+        mStrokeWidth = (mStrokeWidth < 3) ? 3 : mStrokeWidth;
         mCenterPoint.x = mWidth / 2;
-        mCenterPoint.y = height / 2;
-        int w = mWidth - getPaddingLeft() - getPaddingRight();
-        int h = height - getPaddingTop() - getPaddingBottom();
-        mTickPoints[0].x = Math.round((float) w / 12 * 3) + getPaddingLeft();
-        mTickPoints[0].y = Math.round((float) h / 12 * 6) + getPaddingTop();
-        mTickPoints[1].x = Math.round((float) w / 12 * 5) + getPaddingLeft();
-        mTickPoints[1].y = Math.round((float) h / 12 * 8) + getPaddingTop();
-        mTickPoints[2].x = Math.round((float) w / 12 * 9) + getPaddingLeft();
-        mTickPoints[2].y = Math.round((float) h / 12 * 4) + getPaddingTop();
-        System.out.println(Arrays.toString(mTickPoints));
-        //计算对号'✓ '左右两边的距离
+        mCenterPoint.y = getMeasuredHeight() / 2;
+    
+        mTickPoints[0].x = Math.round((float) getMeasuredWidth() / 30 * 7);
+        mTickPoints[0].y = Math.round((float) getMeasuredHeight() / 30 * 14);
+        mTickPoints[1].x = Math.round((float) getMeasuredWidth() / 30 * 13);
+        mTickPoints[1].y = Math.round((float) getMeasuredHeight() / 30 * 20);
+        mTickPoints[2].x = Math.round((float) getMeasuredWidth() / 30 * 22);
+        mTickPoints[2].y = Math.round((float) getMeasuredHeight() / 30 * 10);
+        
         mLeftLineDistance = (float) Math.sqrt(Math.pow(mTickPoints[1].x - mTickPoints[0].x, 2) +
                 Math.pow(mTickPoints[1].y - mTickPoints[0].y, 2));
         mRightLineDistance = (float) Math.sqrt(Math.pow(mTickPoints[2].x - mTickPoints[1].x, 2) +
@@ -227,71 +234,27 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
     
     @Override
     protected void onDraw(Canvas canvas) {
-        if (!isChecked()) {
-            drawNormalStatus(canvas);
-        }
         drawBorder(canvas);
-        //drawCenter(canvas);
-        drawTickPathStatic(canvas);
-        //  drawTick(canvas);
-    }
-    
-    private void drawNormalStatus(Canvas canvas) {
-        mFloorPaint.setColor(mNormalColor);
-        mFloorPaint.setStrokeWidth(mStrokeWidth);
-        mFloorPaint.setStyle(Paint.Style.STROKE);
-        int radius = mCenterPoint.x - getPaddingLeft();
-        canvas.drawCircle(mCenterPoint.x, mCenterPoint.y, radius * mFloorScale, mFloorPaint);
+        drawCenter(canvas);
+        // drawTick(canvas);
     }
     
     private void drawCenter(Canvas canvas) {
-        //mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(mUnCheckedColor);
         float radius = (mCenterPoint.x - mStrokeWidth) * mScaleVal;
         canvas.drawCircle(mCenterPoint.x, mCenterPoint.y, radius, mPaint);
     }
     
     private void drawBorder(Canvas canvas) {
-        mFloorPaint.setColor(mNormalColor);
-        mFloorPaint.setStrokeWidth(dp2px(1));
-        mFloorPaint.setStyle(Paint.Style.STROKE);
-        int radius = mCenterPoint.x - getPaddingLeft();
+        mFloorPaint.setColor(mFloorColor);
+        int radius = mCenterPoint.x;
         canvas.drawCircle(mCenterPoint.x, mCenterPoint.y, radius * mFloorScale, mFloorPaint);
     }
     
-    /**
-     * 画对号
-     *
-     * @param canvas
-     */
     private void drawTick(Canvas canvas) {
         if (mTickDrawing && isChecked()) {
             drawTickPath(canvas);
-            return;
         }
-        
-        if (!isChecked()) {
-            drawTickPathStatic(canvas);
-        }
-    }
-    
-    private void drawTickPathStatic(Canvas canvas) {
-        mTickPath.reset();
-        float stopX = mTickPoints[0].x + (mTickPoints[1].x - mTickPoints[0].x);
-        float stopY = mTickPoints[0].y + (mTickPoints[1].y - mTickPoints[0].y);
-        
-        mTickPath.moveTo(mTickPoints[0].x, mTickPoints[0].y);
-        mTickPath.lineTo(stopX, stopY);
-        
-        float stopX1 = mTickPoints[1].x + (mTickPoints[2].x - mTickPoints[1].x);
-        float stopY1 = mTickPoints[1].y - (mTickPoints[1].y - mTickPoints[2].y);
-        
-        //  mTickPath.reset();
-        mTickPath.moveTo(mTickPoints[1].x, mTickPoints[1].y);
-        mTickPath.lineTo(stopX1, stopY1);
-        //  canvas.drawPath(mTickPath, mTickPaint);
-        
-        canvas.drawPath(mTickPath, mTickPaint);
     }
     
     private void drawTickPath(Canvas canvas) {
@@ -355,7 +318,7 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mScaleVal = (float) animation.getAnimatedValue();
-                mNormalColor = getGradientColor(mUnCheckedColor, mCheckedColor, 1 - mScaleVal);
+                mFloorColor = getGradientColor(mUnCheckedColor, mCheckedColor, 1 - mScaleVal);
                 postInvalidate();
             }
         });
@@ -384,7 +347,7 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mScaleVal = (float) animation.getAnimatedValue();
-                mNormalColor = getGradientColor(mCheckedColor, mFloorUnCheckedColor, mScaleVal);
+                mFloorColor = getGradientColor(mCheckedColor, mFloorUnCheckedColor, mScaleVal);
                 postInvalidate();
             }
         });
@@ -413,7 +376,7 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
         }, mAnimDuration);
     }
     
-    private int getGradientColor(int startColor, int endColor, float percent) {
+    private static int getGradientColor(int startColor, int endColor, float percent) {
         int startA = Color.alpha(startColor);
         int startR = Color.red(startColor);
         int startG = Color.green(startColor);
@@ -435,8 +398,12 @@ public class SmoothCheckBox extends View implements Checkable, View.OnClickListe
         this.mListener = l;
     }
     
-    
     public interface OnCheckedChangeListener {
         void onCheckedChanged(SmoothCheckBox checkBox, boolean isChecked);
+    }
+    
+    private int dp2px(float dipValue) {
+        final float scale = Resources.getSystem().getDisplayMetrics().density;
+        return (int) (dipValue * scale + 0.5f);
     }
 }
