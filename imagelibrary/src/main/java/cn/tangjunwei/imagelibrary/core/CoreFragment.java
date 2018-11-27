@@ -176,6 +176,10 @@ public class CoreFragment extends Fragment {
                     mOnImageSelectListener.onSelectSuccess(data.getStringExtra("path"));
                     closeSelf();
                     break;
+                case REQUEST_SELECT_IMAGE:
+                    mOnImageSelectListener.onSelectSuccess(data.getStringArrayExtra("paths"));
+                    closeSelf();
+                    break;
                 default:
                     mOnImageSelectListener.onSelectFail("cancel");
                     closeSelf();

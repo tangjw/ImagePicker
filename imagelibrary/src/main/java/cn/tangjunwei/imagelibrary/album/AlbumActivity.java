@@ -3,6 +3,7 @@ package cn.tangjunwei.imagelibrary.album;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import cn.tangjunwei.imagelibrary.ImageLoader;
 import cn.tangjunwei.imagelibrary.R;
+import cn.tangjunwei.imagelibrary.album.bean.ImageBean;
 import cn.tangjunwei.imagelibrary.album.fragment.ImageSelectFragment;
 import cn.tangjunwei.imagelibrary.core.CropOption;
 import cn.tangjunwei.imagelibrary.core.ImagePicker;
@@ -24,6 +26,9 @@ import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
  * <a href="https://github.com/tangjw">Follow me</a>
  */
 public class AlbumActivity extends AppCompatActivity implements Picker.OnImageSelectListener {
+    
+    private ImageSelectFragment mFragment;
+    
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,13 +52,13 @@ public class AlbumActivity extends AppCompatActivity implements Picker.OnImageSe
         CropOption cropOption = (CropOption) getIntent().getSerializableExtra("CropOption");
     
         FragmentManager fragmentManager = getSupportFragmentManager();
-        
-        ImageSelectFragment fragment = (ImageSelectFragment) fragmentManager.findFragmentByTag(ImageSelectFragment.class.getSimpleName());
-        if (fragment == null) {
-            fragment = ImageSelectFragment.newInstance(maxCount, cropOption);
+    
+        mFragment = (ImageSelectFragment) fragmentManager.findFragmentByTag(ImageSelectFragment.class.getSimpleName());
+        if (mFragment == null) {
+            mFragment = ImageSelectFragment.newInstance(maxCount, cropOption);
         }
         fragmentManager.beginTransaction()
-                .replace(R.id.fl_container, fragment, ImageSelectFragment.class.getSimpleName())
+                .replace(R.id.fl_container, mFragment, ImageSelectFragment.class.getSimpleName())
                 .commit();
     }
     
@@ -82,6 +87,22 @@ public class AlbumActivity extends AppCompatActivity implements Picker.OnImageSe
     }
     
     public void back(View view) {
+        finish();
+    }
+    
+    public void selectDone(View view) {
+        
+        SparseArray<ImageBean> sparseArray = mFragment.mSparseArray;
+        if (sparseArray != null) {
+            String[] paths = new String[sparseArray.size()];
+            for (int i = 0; i < sparseArray.size(); i++) {
+                ImageBean val = sparseArray.valueAt(i);
+                paths[val.getIndex() - 1] = val.getPath();
+            }
+            Intent intent = new Intent();
+            intent.putExtra("paths", paths);
+            setResult(Activity.RESULT_OK, intent);
+        }
         finish();
     }
 }

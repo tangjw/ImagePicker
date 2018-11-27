@@ -3,8 +3,8 @@
               xmlns:tool="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              tool:context=".album.AlbumActivity"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              tool:context=".album.AlbumActivity">
 
     <FrameLayout
         android:id="@+id/toolbar"
@@ -26,6 +26,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="选取图片"
+            android:textColor="#fff"
+            android:textSize="16dp"/>
+
+
+        <TextView
+            android:id="@+id/tv_done"
+            android:onClick="selectDone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="14dp"
+            android:text="完成"
             android:textColor="#fff"
             android:textSize="16dp"/>
 

@@ -2,6 +2,7 @@ package cn.tangjunwei.imagepicker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +80,10 @@ public class HomeFragment extends Fragment implements Picker.OnImageSelectListen
     
     @Override
     public void onSelectSuccess(String[] paths) {
-        
+        if (paths == null) return;
+        for (String path : paths) {
+            Log.w("HomeFragment", path);
+        }
     }
     
     @Override

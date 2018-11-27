@@ -42,7 +42,7 @@ import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Picker.OnImageSelectListener, AdapterView.OnItemClickListener, ImageSelectAdapter.OnCheckedImageChangeListener {
+public class ImageSelectFragment extends ILBaseFragment implements AlbumView, AdapterView.OnItemClickListener, ImageSelectAdapter.OnCheckedImageChangeListener {
     
     private final static String ARG_PARAM1 = "ImageLoader";
     
@@ -66,7 +66,8 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     private int mMaxCount;
     private int mCropSize;
     private CropDialogFragment mCropDialogFragment;
-    private SparseArray<ImageBean> mSparseArray;
+    
+    public SparseArray<ImageBean> mSparseArray;
     
     
     public static ImageSelectFragment newInstance(int maxCount, @Nullable CropOption cropOption) {
@@ -271,21 +272,6 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     
     private int getScreenHeight() {
         return getResources().getDisplayMetrics().heightPixels;
-    }
-    
-    @Override
-    public void onSelectSuccess(String avatarPath) {
-        
-    }
-    
-    @Override
-    public void onSelectSuccess(String[] paths) {
-        
-    }
-    
-    @Override
-    public void onSelectFail(String msg) {
-        
     }
     
     @Override
