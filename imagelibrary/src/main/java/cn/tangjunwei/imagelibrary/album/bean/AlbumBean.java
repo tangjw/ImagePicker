@@ -1,5 +1,7 @@
 package cn.tangjunwei.imagelibrary.album.bean;
 
+import java.io.Serializable;
+
 /**
  * desc
  * <p>
@@ -7,7 +9,7 @@ package cn.tangjunwei.imagelibrary.album.bean;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public class AlbumBean {
+public class AlbumBean implements Serializable {
     private String id;
     private String name;
     private String cover;

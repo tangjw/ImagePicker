@@ -1,5 +1,8 @@
 package cn.tangjunwei.imagelibrary.album.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * desc
  * <p>
@@ -7,21 +10,21 @@ package cn.tangjunwei.imagelibrary.album.bean;
  * <a href="mailto:tjwabc@gmail.com">Contact me</a>
  * <a href="https://github.com/tangjw">Follow me</a>
  */
-public class ImageBean {
-    private long id;
+public class ImageBean implements Parcelable {
+    private int id;
     private String name;
     private String path;
     private int index;
     private boolean isSelected;
     
-    public ImageBean(long id, String name, String path, boolean isSelected) {
+    public ImageBean(int id, String name, String path, boolean isSelected) {
         this.id = id;
         this.name = name;
         this.path = path;
         this.isSelected = isSelected;
     }
     
-    public ImageBean(long id, String name, String path, int index, boolean isSelected) {
+    public ImageBean(int id, String name, String path, int index, boolean isSelected) {
         this.id = id;
         this.name = name;
         this.path = path;
@@ -38,11 +41,11 @@ public class ImageBean {
         this.isSelected = index > 0;
     }
     
-    public long getId() {
+    public int getId() {
         return id;
     }
     
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
     
@@ -65,4 +68,38 @@ public class ImageBean {
     public boolean isSelected() {
         return isSelected;
     }
+    
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.path);
+        dest.writeInt(this.index);
+        dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
+    }
+    
+    protected ImageBean(Parcel in) {
+        this.id = in.readInt();
+        this.name = in.readString();
+        this.path = in.readString();
+        this.index = in.readInt();
+        this.isSelected = in.readByte() != 0;
+    }
+    
+    public static final Creator<ImageBean> CREATOR = new Creator<ImageBean>() {
+        @Override
+        public ImageBean createFromParcel(Parcel source) {
+            return new ImageBean(source);
+        }
+        
+        @Override
+        public ImageBean[] newArray(int size) {
+            return new ImageBean[size];
+        }
+    };
 }

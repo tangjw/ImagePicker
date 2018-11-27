@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.LongSparseArray;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,14 +51,11 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
      * 当前选中相册的 bucket_id, 默认null是所有图片
      */
     private String mCurrentSelectedAlbum;
-    /**
-     * 当前选中Image在当前Album所有Image集合中的位置
-     */
-    private LongSparseArray<Integer> mSparseArray;
+
     /**
      * 全局选中的Image id 集合
      */
-    private HashSet<Long> mSelectedIdSet;
+    private HashSet<Integer> mSelectedIdSet;
     private List<AlbumBean> mAlbumList;
     
     public AlbumPresenter(AlbumView albumView) {
@@ -123,14 +119,8 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
             mImageList.clear();
         }
         
-        if (mSparseArray == null) {
-            mSparseArray = new LongSparseArray<>();
-        } else {
-            mSparseArray.clear();
-        }
-        
         for (int i = 0; i < data.getCount(); i++) {
-            long img_id = data.getLong(data.getColumnIndex(mProjection[0]));
+            int img_id = data.getInt(data.getColumnIndex(mProjection[0]));
             String img_name = data.getString(data.getColumnIndex(mProjection[1]));
             String img_path = data.getString(data.getColumnIndex(mProjection[2]));
             mImageList.add(new ImageBean(img_id, img_name, img_path, mSelectedIdSet.contains(img_id)));

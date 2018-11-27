@@ -76,7 +76,7 @@
                 android:text="预览"
                 android:textColor="@color/colorTextGray"
                 android:textSize="16dp"
-                android:visibility="invisible"/>
+                android:visibility="visible"/>
 
 
         </LinearLayout>

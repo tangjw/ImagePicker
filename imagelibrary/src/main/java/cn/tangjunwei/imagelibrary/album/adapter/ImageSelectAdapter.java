@@ -1,7 +1,7 @@
 package cn.tangjunwei.imagelibrary.album.adapter;
 
 import android.content.Context;
-import android.util.LongSparseArray;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -19,17 +19,17 @@ public class ImageSelectAdapter extends BaseAdapter {
     private List<ImageBean> mList;
     private ImageLoader mImageLoader;
     private int mMaxCount;
-    private LongSparseArray<ImageBean> mSparseArray;
+    private SparseArray<ImageBean> mSparseArray;
     private OnCheckedImageChangeListener mListener;
-    
-    public ImageSelectAdapter(List<ImageBean> list, ImageLoader imageLoader, LongSparseArray<ImageBean> sparseArray) {
-        mList = list;
-        mImageLoader = imageLoader;
-        mSparseArray = sparseArray;
-    }
     
     public void refreshData(List<ImageBean> list) {
         mList = list;
+        notifyDataSetChanged();
+    }
+    
+    public void refreshData(List<ImageBean> list, SparseArray<ImageBean> sparseArray) {
+        mList = list;
+        mSparseArray = sparseArray;
         notifyDataSetChanged();
     }
     
@@ -48,12 +48,13 @@ public class ImageSelectAdapter extends BaseAdapter {
         return getItem(position).getId();
     }
     
-    public ImageSelectAdapter(List<ImageBean> list, ImageLoader imageLoader, int maxCount) {
+    public ImageSelectAdapter(List<ImageBean> list, ImageLoader imageLoader, int maxCount, SparseArray<ImageBean> sparseArray) {
         mList = list;
         mImageLoader = imageLoader;
         mMaxCount = maxCount;
-        if (maxCount != 0) {
-            mSparseArray = new LongSparseArray<>();
+        mSparseArray = sparseArray;
+        if (maxCount != 0 && mSparseArray == null) {
+            mSparseArray = new SparseArray<>();
         }
     }
     
@@ -75,7 +76,6 @@ public class ImageSelectAdapter extends BaseAdapter {
             viewHolder.tvType = convertView.findViewById(R.id.tv_image_type);
             viewHolder.checkableView = convertView.findViewById(R.id.cv_index);
             convertView.setTag(viewHolder);
-    
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
@@ -84,7 +84,6 @@ public class ImageSelectAdapter extends BaseAdapter {
             viewHolder.checkableView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("position: " + position);
                     int size = mSparseArray.size();
                     ImageBean imageBean = mList.get(position);
                     if (!imageBean.isSelected()) {
@@ -93,7 +92,6 @@ public class ImageSelectAdapter extends BaseAdapter {
                             viewHolder.checkableView.switchState();
                             imageBean.setIndex(size + 1);
                             mSparseArray.append(imageBean.getId(), imageBean);
-                            
                         } else {
                             System.out.println("最多选9张");
                         }
@@ -154,6 +152,6 @@ public class ImageSelectAdapter extends BaseAdapter {
     }
     
     public interface OnCheckedImageChangeListener {
-        void onCheckedImageChange(LongSparseArray<ImageBean> sparseArray);
+        void onCheckedImageChange(SparseArray<ImageBean> sparseArray);
     }
 }

@@ -1,7 +1,8 @@
 package cn.tangjunwei.imagelibrary.album.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.LongSparseArray;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -47,6 +49,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     private ContentLoadingProgressBar mProgressBar;
     private ImageLoader mImageLoader;
     private TextView mTvError;
+    private TextView mTvPreview;
     private RelativeLayout mRlContent;
     private GridView mGridView;
     private ImageSelectAdapter mAdapter;
@@ -63,7 +66,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     private int mMaxCount;
     private int mCropSize;
     private CropDialogFragment mCropDialogFragment;
-    private LongSparseArray<ImageBean> mSparseArray;
+    private SparseArray<ImageBean> mSparseArray;
     
     
     public static ImageSelectFragment newInstance(int maxCount, @Nullable CropOption cropOption) {
@@ -87,6 +90,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
                     ImagePicker.getInstance().initImageLoader(mImageLoader);
                 }
             }
+            mSparseArray = savedInstanceState.getSparseParcelableArray("ImageArray");
         }
         super.onCreate(savedInstanceState);
     
@@ -116,6 +120,20 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
         mGridView = rootView.findViewById(R.id.grid_view);
         mLlSelectAlbum = rootView.findViewById(R.id.ll_select_album);
         mTvSelectAlbum = rootView.findViewById(R.id.tv_select_album);
+        mTvPreview = rootView.findViewById(R.id.tv_preview);
+        if (mMaxCount == 0) {
+            mTvPreview.setVisibility(View.GONE);
+        } else {
+            mTvPreview.setVisibility(View.VISIBLE);
+            mTvPreview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mSparseArray != null && mSparseArray.size() > 0) {
+                        Toast.makeText(mActivity, "预览", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
         mPresenter = new AlbumPresenter(this);
         
         mPresenter.loadAllImage(mActivity);
@@ -135,6 +153,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putSerializable("ImageLoader", ImagePicker.getInstance().getImageLoader());
+        outState.putSparseParcelableArray("ImageArray", mSparseArray);
     }
     
     
@@ -176,11 +195,11 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     public void showImage(List<ImageBean> list) {
         mList = list;
         if (mAdapter == null) {
-            mAdapter = new ImageSelectAdapter(list, mImageLoader, mMaxCount);
+            mAdapter = new ImageSelectAdapter(list, mImageLoader, mMaxCount, mSparseArray);
             mAdapter.setListener(this);
             mGridView.setAdapter(mAdapter);
         } else {
-            mAdapter.refreshData(list);
+            mAdapter.refreshData(list, mSparseArray);
         }
     }
     
@@ -273,14 +292,15 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mMaxCount > 0) {
             // TODO: 2018/11/26 预览 
+            if (mSparseArray == null) return;
             for (int i = 0; i < mSparseArray.size(); i++) {
                 System.out.println(mSparseArray.valueAt(i).getName());
             }
         } else {
-        
+    
             FragmentManager fm = mActivity.getSupportFragmentManager();
             CropDialogFragment fragment = (CropDialogFragment) fm.findFragmentByTag(CropDialogFragment.class.getSimpleName());
-        
+    
             if (fragment != null) {
                 fragment.dismissAllowingStateLoss();
             }
@@ -292,8 +312,12 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Pi
     
     
     @Override
-    public void onCheckedImageChange(LongSparseArray<ImageBean> sparseArray) {
+    public void onCheckedImageChange(SparseArray<ImageBean> sparseArray) {
         mSparseArray = sparseArray;
-        
+        if (sparseArray != null && sparseArray.size() > 0) {
+            mTvPreview.setTextColor(Color.WHITE);
+        } else {
+            mTvPreview.setTextColor(Color.GRAY);
+        }
     }
 }
