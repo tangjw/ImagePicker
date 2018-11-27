@@ -25,6 +25,7 @@ import cn.tangjunwei.imagelibrary.ImageLoader;
 import cn.tangjunwei.imagelibrary.R;
 import cn.tangjunwei.imagelibrary.album.AlbumPresenter;
 import cn.tangjunwei.imagelibrary.album.AlbumView;
+import cn.tangjunwei.imagelibrary.album.PreviewDialogFragment;
 import cn.tangjunwei.imagelibrary.album.adapter.AlbumSelectAdapter;
 import cn.tangjunwei.imagelibrary.album.adapter.ImageSelectAdapter;
 import cn.tangjunwei.imagelibrary.album.bean.AlbumBean;
@@ -60,7 +61,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
     private List<AlbumBean> mAlbumList;
     private AlbumSelectAdapter mAlbumSelectAdapter;
     private int mCurAlbumIndex = 0;
-    private List<ImageBean> mList;
+    private List<ImageBean> mImageList;
     
     private CropOption mCropOption;
     private int mMaxCount;
@@ -194,7 +195,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
     
     @Override
     public void showImage(List<ImageBean> list) {
-        mList = list;
+        mImageList = list;
         if (mAdapter == null) {
             mAdapter = new ImageSelectAdapter(list, mImageLoader, mMaxCount, mSparseArray);
             mAdapter.setListener(this);
@@ -277,7 +278,11 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mMaxCount > 0) {
-            // TODO: 2018/11/26 预览 
+            // TODO: 2018/11/26 预览
+            PreviewDialogFragment.newInstance(mImageList.get(position).getPath())
+                    .show(mActivity.getSupportFragmentManager(), PreviewDialogFragment.class.getSimpleName());
+            
+            
             if (mSparseArray == null) return;
             for (int i = 0; i < mSparseArray.size(); i++) {
                 System.out.println(mSparseArray.valueAt(i).getName());
@@ -290,7 +295,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
             if (fragment != null) {
                 fragment.dismissAllowingStateLoss();
             }
-            fragment = CropDialogFragment.newInstance(mList.get(position).getPath(), mCropOption.getWith());
+            fragment = CropDialogFragment.newInstance(mImageList.get(position).getPath(), mCropOption.getWith());
             fragment.setOnImageSelectListener((Picker.OnImageSelectListener) mActivity);
             fragment.show(fm, CropDialogFragment.class.getSimpleName());
         }
