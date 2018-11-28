@@ -89,23 +89,20 @@ public class PreviewDialogFragment extends DialogFragment {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(mPath, options);
+    
         {   // 设置一下恰当的 缩放系数
             float maxScale = 3f;
             float mediumScale = 1.5f;
             float minScale = 1f;
             float imageWidth = options.outWidth;
             float imageHeight = options.outHeight;
-        
             float screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
             float screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-        
             float screenRadio = screenWidth / screenHeight;
             float imageRadio = imageWidth / imageHeight;
-        
             if (imageWidth < screenWidth && imageHeight < screenHeight) {
                 minScale = imageWidth / screenWidth;
             }
-        
             if (imageRadio > screenRadio + 0.1) {
                 mediumScale = screenHeight / (screenWidth / imageRadio);
                 if (imageHeight <= screenHeight) {
@@ -121,7 +118,6 @@ public class PreviewDialogFragment extends DialogFragment {
                     maxScale = 2f * mediumScale;
                 }
             }
-        
             photoView.setMaximumScale(maxScale);
             photoView.setMediumScale(mediumScale);
             photoView.setMinimumScale(minScale);
