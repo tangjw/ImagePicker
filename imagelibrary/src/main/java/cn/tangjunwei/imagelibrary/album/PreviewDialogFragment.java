@@ -1,6 +1,7 @@
 package cn.tangjunwei.imagelibrary.album;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
@@ -88,15 +89,54 @@ public class PreviewDialogFragment extends DialogFragment {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(mPath, options);
-        float radio = 1f * options.outWidth / options.outHeight;
-        float mediumScale = 1f * 1920 / 1080 * radio;
+        {   // 设置一下恰当的 缩放系数
+            float maxScale = 3f;
+            float mediumScale = 1.5f;
+            float minScale = 1f;
+            float imageWidth = options.outWidth;
+            float imageHeight = options.outHeight;
+        
+            float screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+            float screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+        
+            float screenRadio = screenWidth / screenHeight;
+            float imageRadio = imageWidth / imageHeight;
+        
+            if (imageWidth < screenWidth && imageHeight < screenHeight) {
+                minScale = imageWidth / screenWidth;
+            }
+        
+            if (imageRadio > screenRadio + 0.1) {
+                mediumScale = screenHeight / (screenWidth / imageRadio);
+                if (imageHeight <= screenHeight) {
+                    maxScale = 1.5f * mediumScale;
+                } else {
+                    maxScale = 2f * mediumScale;
+                }
+            } else if (imageRadio < screenRadio - 0.1) {
+                mediumScale = screenWidth / (screenHeight * imageRadio);
+                if (imageWidth <= screenWidth) {
+                    maxScale = 1.5f * mediumScale;
+                } else {
+                    maxScale = 2f * mediumScale;
+                }
+            }
+        
+            photoView.setMaximumScale(maxScale);
+            photoView.setMediumScale(mediumScale);
+            photoView.setMinimumScale(minScale);
+        }
+        
+        
+       /* float imageRadio = 1f * options.outWidth / options.outHeight;
+        float mediumScale = 1f * 1920 / 1080 * imageRadio;
         photoView.setMediumScale(mediumScale);
         photoView.setMaximumScale(mediumScale * 2);
         if (options.outWidth < 1080) {
             photoView.setMinimumScale(1f * options.outWidth / 1080);
         } else {
             photoView.setMinimumScale(1f);
-        }
+        }*/
         
         ImageLoader imageLoader = ImagePicker.getInstance().getImageLoader();
         

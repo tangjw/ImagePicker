@@ -1,5 +1,6 @@
 package cn.tangjunwei.imagepicker;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -37,6 +38,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        System.out.println(Resources.getSystem().getDisplayMetrics().widthPixels);
+        System.out.println(Resources.getSystem().getDisplayMetrics().heightPixels);
+    
+    
+        Resources resources = Resources.getSystem();
+        int resourceId = resources.getIdentifier("config_showNavigationBar", "bool", "android");
+        if (resourceId > 0 && resources.getBoolean(resourceId)) {
+            int nav_bar_identifier = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+            int dimensionPixelSize = resources.getDimensionPixelSize(nav_bar_identifier);
+            System.out.println("dimensionPixelSize: " + dimensionPixelSize);
+        }
         
         mFrameLayout = findViewById(R.id.fl_container);
         
