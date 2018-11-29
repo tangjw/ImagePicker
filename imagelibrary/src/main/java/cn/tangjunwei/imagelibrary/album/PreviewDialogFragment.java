@@ -31,10 +31,12 @@ import cn.tangjunwei.imagelibrary.core.ImagePicker;
 public class PreviewDialogFragment extends DialogFragment {
     private FragmentActivity mActivity;
     private String mPath;
+    private int mDirection;
     
-    public static PreviewDialogFragment newInstance(String path) {
+    public static PreviewDialogFragment newInstance(String path, int direction) {
         Bundle args = new Bundle();
         args.putString("path", path);
+        args.putInt("direction", direction);
         PreviewDialogFragment fragment = new PreviewDialogFragment();
         fragment.setArguments(args);
         return fragment;
@@ -65,6 +67,7 @@ public class PreviewDialogFragment extends DialogFragment {
         Bundle arguments = getArguments();
         if (arguments != null) {
             mPath = arguments.getString("path");
+            mDirection = arguments.getInt("direction", 0);
         }
     }
     
@@ -90,38 +93,44 @@ public class PreviewDialogFragment extends DialogFragment {
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(mPath, options);
     
-        {   // 设置一下恰当的 缩放系数
-            float maxScale = 3f;
-            float mediumScale = 1.5f;
-            float minScale = 1f;
-            float imageWidth = options.outWidth;
-            float imageHeight = options.outHeight;
-            float screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
-            float screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-            float screenRadio = screenWidth / screenHeight;
-            float imageRadio = imageWidth / imageHeight;
-            if (imageWidth < screenWidth && imageHeight < screenHeight) {
-                minScale = imageWidth / screenWidth;
-            }
-            if (imageRadio > screenRadio + 0.1) {
-                mediumScale = screenHeight / (screenWidth / imageRadio);
-                if (imageHeight <= screenHeight) {
-                    maxScale = 1.5f * mediumScale;
-                } else {
-                    maxScale = 2f * mediumScale;
-                }
-            } else if (imageRadio < screenRadio - 0.1) {
-                mediumScale = screenWidth / (screenHeight * imageRadio);
-                if (imageWidth <= screenWidth) {
-                    maxScale = 1.5f * mediumScale;
-                } else {
-                    maxScale = 2f * mediumScale;
-                }
-            }
-            photoView.setMaximumScale(maxScale);
-            photoView.setMediumScale(mediumScale);
-            photoView.setMinimumScale(minScale);
+    
+        // 设置一下恰当的 缩放系数
+        float maxScale = 3f;
+        float mediumScale = 1.5f;
+        float minScale = 1f;
+        float imageWidth = options.outWidth;
+        float imageHeight = options.outHeight;
+        float screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+        float screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+        float screenRadio = screenWidth / screenHeight;
+        float imageRadio = imageWidth / imageHeight;
+    
+        if (mDirection / 90 % 2 == 1) {
+            imageRadio = imageHeight / imageWidth;
         }
+    
+    
+        if (imageWidth < screenWidth && imageHeight < screenHeight) {
+            minScale = imageWidth / screenWidth;
+        }
+        if (imageRadio > screenRadio + 0.05) {
+            mediumScale = screenHeight / (screenWidth / imageRadio);
+            if (imageHeight <= screenHeight) {
+                maxScale = 1.5f * mediumScale;
+            } else {
+                maxScale = 2f * mediumScale;
+            }
+        } else if (imageRadio < screenRadio - 0.05) {
+            mediumScale = screenWidth / (screenHeight * imageRadio);
+            if (imageWidth <= screenWidth) {
+                maxScale = 1.5f * mediumScale;
+            } else {
+                maxScale = 2f * mediumScale;
+            }
+        }
+        photoView.setMaximumScale(maxScale);
+        photoView.setMediumScale(mediumScale);
+        photoView.setMinimumScale(minScale);
         
         
        /* float imageRadio = 1f * options.outWidth / options.outHeight;

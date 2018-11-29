@@ -34,7 +34,8 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
             MediaStore.Images.Media.DISPLAY_NAME,
             MediaStore.Images.Media.DATA,
             MediaStore.Images.Media.BUCKET_ID,
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Images.Media.ORIENTATION};
     private AlbumView mAlbumView;
     private LoaderManager mLoaderManager;
     /**
@@ -51,7 +52,7 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
      * 当前选中相册的 bucket_id, 默认null是所有图片
      */
     private String mCurrentSelectedAlbum;
-
+    
     /**
      * 全局选中的Image id 集合
      */
@@ -123,7 +124,8 @@ public class AlbumPresenter implements LoaderManager.LoaderCallbacks<Cursor> {
             int img_id = data.getInt(data.getColumnIndex(mProjection[0]));
             String img_name = data.getString(data.getColumnIndex(mProjection[1]));
             String img_path = data.getString(data.getColumnIndex(mProjection[2]));
-            mImageList.add(new ImageBean(img_id, img_name, img_path, mSelectedIdSet.contains(img_id)));
+            int img_direction = data.getInt(data.getColumnIndex(mProjection[5]));
+            mImageList.add(new ImageBean(img_id, img_name, img_path, img_direction));
             
             String bucket_id = data.getString(data.getColumnIndex(mProjection[3]));
             String bucket_name = data.getString(data.getColumnIndex(mProjection[4]));

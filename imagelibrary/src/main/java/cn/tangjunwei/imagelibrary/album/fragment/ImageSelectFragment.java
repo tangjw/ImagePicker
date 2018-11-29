@@ -70,7 +70,6 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
     
     public SparseArray<ImageBean> mSparseArray;
     
-    
     public static ImageSelectFragment newInstance(int maxCount, @Nullable CropOption cropOption) {
         
         Bundle args = new Bundle();
@@ -279,9 +278,11 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mMaxCount > 0) {
             // TODO: 2018/11/26 预览
-            PreviewDialogFragment.newInstance(mImageList.get(position).getPath())
+    
+            System.out.println(mImageList.get(position).getDirection());
+    
+            PreviewDialogFragment.newInstance(mImageList.get(position).getPath(), mImageList.get(position).getDirection())
                     .show(mActivity.getSupportFragmentManager(), PreviewDialogFragment.class.getSimpleName());
-            
             
             if (mSparseArray == null) return;
             for (int i = 0; i < mSparseArray.size(); i++) {

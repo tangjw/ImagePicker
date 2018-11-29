@@ -14,22 +14,23 @@ public class ImageBean implements Parcelable {
     private int id;
     private String name;
     private String path;
+    private int direction;
     private int index;
     private boolean isSelected;
     
-    public ImageBean(int id, String name, String path, boolean isSelected) {
+    public ImageBean(int id, String name, String path, int direction) {
         this.id = id;
         this.name = name;
         this.path = path;
-        this.isSelected = isSelected;
+        this.direction = direction;
     }
     
-    public ImageBean(int id, String name, String path, int index, boolean isSelected) {
-        this.id = id;
-        this.name = name;
-        this.path = path;
-        this.index = index;
-        this.isSelected = isSelected;
+    public int getDirection() {
+        return direction;
+    }
+    
+    public void setDirection(int direction) {
+        this.direction = direction;
     }
     
     public int getIndex() {
@@ -69,6 +70,7 @@ public class ImageBean implements Parcelable {
         return isSelected;
     }
     
+    
     @Override
     public int describeContents() {
         return 0;
@@ -79,6 +81,7 @@ public class ImageBean implements Parcelable {
         dest.writeInt(this.id);
         dest.writeString(this.name);
         dest.writeString(this.path);
+        dest.writeInt(this.direction);
         dest.writeInt(this.index);
         dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
     }
@@ -87,6 +90,7 @@ public class ImageBean implements Parcelable {
         this.id = in.readInt();
         this.name = in.readString();
         this.path = in.readString();
+        this.direction = in.readInt();
         this.index = in.readInt();
         this.isSelected = in.readByte() != 0;
     }
