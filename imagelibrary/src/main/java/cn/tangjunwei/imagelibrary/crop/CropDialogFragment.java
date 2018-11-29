@@ -85,10 +85,16 @@ public class CropDialogFragment extends DialogFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window window = getDialog().getWindow();
-            if (window == null) return;
+        Window window = getDialog().getWindow();
+        if (window == null) return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    /*| View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR*/);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
     }
     

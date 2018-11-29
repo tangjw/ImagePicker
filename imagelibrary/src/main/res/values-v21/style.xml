@@ -7,11 +7,6 @@
         <item name="android:screenOrientation">portrait</item>
         <item name="android:configChanges">orientation|keyboardHidden|screenSize</item>
         <item name="android:windowAnimationStyle">@style/AnimationCropDialog</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
-
-    <style name="AnimationCropDialog">
-        <item name="android:windowEnterAnimation">@anim/crop_dialog_enter</item>
-        <item name="android:windowExitAnimation">@anim/crop_dialog_exit</item>
-    </style>
-
 </resources>
