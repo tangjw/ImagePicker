@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            android:onClick="back"
+            android:id="@+id/iv_back"
             android:src="@drawable/ic_back_white"/>
 
         <cn.tangjunwei.imagelibrary.widget.MyCheckableView

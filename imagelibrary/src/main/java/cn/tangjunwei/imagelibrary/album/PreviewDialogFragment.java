@@ -10,6 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import com.github.chrisbanes.photoview.PhotoView;
@@ -33,6 +37,9 @@ public class PreviewDialogFragment extends DialogFragment {
     private FragmentActivity mActivity;
     private String mPath;
     private int mDirection;
+    private FrameLayout mToolbar;
+    private boolean isFading;
+    private boolean isToolbarShow;
     
     public static PreviewDialogFragment newInstance(String path, int direction) {
         Bundle args = new Bundle();
@@ -46,7 +53,6 @@ public class PreviewDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        
         if (context instanceof FragmentActivity) {
             mActivity = (FragmentActivity) context;
         } else {
@@ -80,8 +86,7 @@ public class PreviewDialogFragment extends DialogFragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    /*| View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR*/);
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE/*| View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR*/);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -95,28 +100,45 @@ public class PreviewDialogFragment extends DialogFragment {
         
         View inflate = inflater.inflate(R.layout.fragment_preview, container, false);
     
-        final FrameLayout toolbar = inflate.findViewById(R.id.toolbar);
+        mToolbar = inflate.findViewById(R.id.toolbar);
         int statusBarHeight = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
             statusBarHeight = getResources().getDimensionPixelSize(resourceId);
         }
-        toolbar.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.toolbarHeight) + statusBarHeight));
-        toolbar.setPadding(0, statusBarHeight, 0, 0);
+        mToolbar.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.toolbarHeight) + statusBarHeight));
+        mToolbar.setPadding(0, statusBarHeight, 0, 0);
+    
+        inflate.findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeSelf();
+            }
+        });
         
         PhotoView photoView = inflate.findViewById(R.id.photo_view);
     
         photoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toolbar.setVisibility(toolbar.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                if (!isFading) {
+                    if (isToolbarShow) {
+                        fadeOutAnimation();
+                    } else {
+                        fadeInAnimation();
+                    }
+                }
             }
         });
+    
+        Animation alphaAnimation = new AlphaAnimation(1, 0);
+        alphaAnimation.setDuration(1000);
+        alphaAnimation.setFillAfter(true);
+        mToolbar.startAnimation(alphaAnimation);
         
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(mPath, options);
-    
     
         // 设置一下恰当的 缩放系数
         float maxScale = 3f;
@@ -127,12 +149,11 @@ public class PreviewDialogFragment extends DialogFragment {
         float screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
         float screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
         float screenRadio = screenWidth / screenHeight;
-        float imageRadio = imageWidth / imageHeight;
     
+        float imageRadio = imageWidth / imageHeight;
         if (mDirection / 90 % 2 == 1) {
             imageRadio = imageHeight / imageWidth;
         }
-    
     
         if (imageWidth < screenWidth && imageHeight < screenHeight) {
             minScale = imageWidth / screenWidth;
@@ -156,17 +177,6 @@ public class PreviewDialogFragment extends DialogFragment {
         photoView.setMediumScale(mediumScale);
         photoView.setMinimumScale(minScale);
         
-        
-       /* float imageRadio = 1f * options.outWidth / options.outHeight;
-        float mediumScale = 1f * 1920 / 1080 * imageRadio;
-        photoView.setMediumScale(mediumScale);
-        photoView.setMaximumScale(mediumScale * 2);
-        if (options.outWidth < 1080) {
-            photoView.setMinimumScale(1f * options.outWidth / 1080);
-        } else {
-            photoView.setMinimumScale(1f);
-        }*/
-        
         ImageLoader imageLoader = ImagePicker.getInstance().getImageLoader();
         
         imageLoader.loadCropImage(this, mPath, photoView);
@@ -178,4 +188,63 @@ public class PreviewDialogFragment extends DialogFragment {
         dismissAllowingStateLoss();
     }
     
+    private void fadeOutAnimation() {
+        Animation alphaAnimation = new AlphaAnimation(1, 0);
+        alphaAnimation.setInterpolator(new DecelerateInterpolator());
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setFillAfter(true);
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                
+            }
+            
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //mToolbar.setVisibility(View.GONE);
+                isFading = false;
+                isToolbarShow = false;
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                
+            }
+        });
+        mToolbar.startAnimation(alphaAnimation);
+        isFading = true;
+    }
+    
+    private void fadeInAnimation() {
+        Animation alphaAnimation = new AlphaAnimation(0, 1);
+        alphaAnimation.setInterpolator(new AccelerateInterpolator());
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setFillAfter(true);
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                
+            }
+            
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //mToolbar.setVisibility(View.GONE);
+                isFading = false;
+                isToolbarShow = true;
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                
+            }
+        });
+        mToolbar.startAnimation(alphaAnimation);
+        isFading = true;
+    }
+    
+    @Override
+    public void onDestroy() {
+        mToolbar.clearAnimation();
+        super.onDestroy();
+    }
 }
