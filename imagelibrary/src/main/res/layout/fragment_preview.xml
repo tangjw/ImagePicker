@@ -18,17 +18,17 @@
         android:background="#C000">
 
         <ImageView
+            android:id="@+id/iv_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            android:id="@+id/iv_back"
             android:src="@drawable/ic_back_white"/>
 
         <cn.tangjunwei.imagelibrary.widget.MyCheckableView
             android:id="@+id/cv_index"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="10dp"
             android:padding="6dp"
