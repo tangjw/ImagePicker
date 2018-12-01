@@ -29,4 +29,6 @@ public interface ImageLoader extends Serializable {
     
     void loadCropImage(Fragment fragment, String path, ImageView imageView, String mimeType, int width, int height);
     
+    void loadPreviewImage(Context context, String path, ImageView imageView, String mimeType, int width, int height);
+    
 }

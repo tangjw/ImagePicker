@@ -63,6 +63,19 @@ public class MyImageLoaderImpl implements ImageLoader {
     }
     
     @Override
+    public void loadPreviewImage(Context context, String path, ImageView imageView, String mimeType, int width, int height) {
+        System.out.println("ImageLoader MimeType: " + mimeType);
+        System.out.println("ImageLoader width: " + width);
+        System.out.println("ImageLoader height: " + height);
+        GlideApp.with(context)
+                .load(path)
+                .error(R.drawable.image_placeholder_error)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(imageView);
+    }
+    
+    @Override
     public void loadCropImage(FragmentActivity activity, String path, ImageView imageView) {
         System.out.println("loadCropImage: " + path);
         loadCropImage(GlideApp.with(activity), path, imageView);

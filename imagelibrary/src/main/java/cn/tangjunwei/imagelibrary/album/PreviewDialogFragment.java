@@ -1,10 +1,9 @@
 package cn.tangjunwei.imagelibrary.album;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +17,21 @@ import android.widget.FrameLayout;
 
 import com.github.chrisbanes.photoview.PhotoView;
 
+import java.util.Arrays;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager.widget.ViewPager;
 import cn.tangjunwei.imagelibrary.ImageLoader;
 import cn.tangjunwei.imagelibrary.R;
+import cn.tangjunwei.imagelibrary.album.adapter.PreviewPagerAdapter;
+import cn.tangjunwei.imagelibrary.album.bean.ImageBean;
 import cn.tangjunwei.imagelibrary.core.ImagePicker;
+import cn.tangjunwei.imagelibrary.widget.HackyViewPager;
+import cn.tangjunwei.imagelibrary.widget.MyCheckableView;
 
 /**
  * desc
@@ -34,17 +41,21 @@ import cn.tangjunwei.imagelibrary.core.ImagePicker;
  * <a href="https://github.com/tangjw">Follow me</a>
  */
 public class PreviewDialogFragment extends DialogFragment {
-    private FragmentActivity mActivity;
-    private String mPath;
-    private int mDirection;
+    private AlbumActivity mActivity;
+    private int mPreviewType;
     private FrameLayout mToolbar;
     private boolean isFading;
-    private boolean isToolbarShow;
+    private boolean isToolbarShow = true;
     
-    public static PreviewDialogFragment newInstance(String path, int direction) {
+    private int mCurrentPageIndex;
+    private MyCheckableView mCheckableView;
+    private List<ImageBean> mList;
+    private PreviewPagerAdapter mAdapter;
+    private SparseArray<ImageBean> mSelectedImageArray;
+    
+    public static PreviewDialogFragment newInstance(int type) {
         Bundle args = new Bundle();
-        args.putString("path", path);
-        args.putInt("direction", direction);
+        args.putInt("type", type);
         PreviewDialogFragment fragment = new PreviewDialogFragment();
         fragment.setArguments(args);
         return fragment;
@@ -54,7 +65,7 @@ public class PreviewDialogFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof FragmentActivity) {
-            mActivity = (FragmentActivity) context;
+            mActivity = (AlbumActivity) context;
         } else {
             throw new ClassCastException(context.toString() + "must extends FragmentActivity!");
         }
@@ -73,8 +84,7 @@ public class PreviewDialogFragment extends DialogFragment {
         setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeCropDialog);
         Bundle arguments = getArguments();
         if (arguments != null) {
-            mPath = arguments.getString("path");
-            mDirection = arguments.getInt("direction", 0);
+            mPreviewType = arguments.getInt("type", 0);
         }
     }
     
@@ -93,10 +103,10 @@ public class PreviewDialogFragment extends DialogFragment {
         }
     }
     
-    
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mSelectedImageArray = mActivity.mSelectedImageArray;
         
         View inflate = inflater.inflate(R.layout.fragment_preview, container, false);
     
@@ -109,18 +119,66 @@ public class PreviewDialogFragment extends DialogFragment {
         mToolbar.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.toolbarHeight) + statusBarHeight));
         mToolbar.setPadding(0, statusBarHeight, 0, 0);
     
-        inflate.findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
+        mCheckableView = inflate.findViewById(R.id.cv_index);
+    
+        mCheckableView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                closeSelf();
+                ImageBean currentImageBean = mList.get(mCurrentPageIndex);
+                if (currentImageBean.getIndex() > 0) {    // 已选中
+                    mCheckableView.setChecked(0);   // 取消选中
+                    mSelectedImageArray.remove(currentImageBean.getId());    // 在SparseArray中移除取消选中的
+                    for (int i = 0; i < mSelectedImageArray.size(); i++) { // 更新SparseArray中的（索引-1）
+                        ImageBean imageBean = mSelectedImageArray.valueAt(i);
+                        if (imageBean.getIndex() > currentImageBean.getIndex()) {
+                            imageBean.setIndex(imageBean.getIndex() - 1);
+                        }
+                    }
+                    currentImageBean.setIndex(0);   // 在list中设置取消选中
+                } else {    // 未选中
+                    mCheckableView.setChecked(mSelectedImageArray.size() + 1);
+                    currentImageBean.setIndex(mSelectedImageArray.size() + 1);
+                    mCheckableView.setChecked(mSelectedImageArray.size() + 1);
+                    mSelectedImageArray.append(currentImageBean.getId(), currentImageBean);
+                }
+                {   // 检测数据
+                    for (int i = 0; i < mSelectedImageArray.size(); i++) {
+                        System.out.println("spa: " + mSelectedImageArray.valueAt(i).getIndex());
+                    }
+                    for (ImageBean imageBean : mList) {
+                        System.out.println("mList after: " + imageBean.getIndex());
+                    }
+                }
             }
         });
-        
-        PhotoView photoView = inflate.findViewById(R.id.photo_view);
     
-        photoView.setOnClickListener(new View.OnClickListener() {
+    
+        HackyViewPager viewPager = inflate.findViewById(R.id.view_pager);
+    
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onPageSelected(int position) {
+                mCurrentPageIndex = position;
+                setIndicator(mCurrentPageIndex);
+            }
+        });
+    
+        ImageLoader imageLoader = ImagePicker.getInstance().getImageLoader();
+    
+        ImageBean[] arrays = new ImageBean[mSelectedImageArray.size()];
+        for (int i = 0; i < mSelectedImageArray.size(); i++) {
+            ImageBean imageBean = mSelectedImageArray.valueAt(i);
+            arrays[imageBean.getIndex() - 1] = imageBean;
+        }
+        mList = Arrays.asList(arrays);
+    
+        mAdapter = new PreviewPagerAdapter(0, mList, imageLoader, mSelectedImageArray);
+        viewPager.setAdapter(mAdapter);
+        setIndicator(mCurrentPageIndex);
+    
+        mAdapter.setPhotoViewClickListener(new PreviewPagerAdapter.OnPhotoViewClickListener() {
+            @Override
+            public void OnPhotoViewClick(PhotoView photoView) {
                 if (!isFading) {
                     if (isToolbarShow) {
                         fadeOutAnimation();
@@ -131,56 +189,18 @@ public class PreviewDialogFragment extends DialogFragment {
             }
         });
     
-        Animation alphaAnimation = new AlphaAnimation(1, 0);
-        alphaAnimation.setDuration(1000);
-        alphaAnimation.setFillAfter(true);
-        mToolbar.startAnimation(alphaAnimation);
-        
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mPath, options);
-    
-        // 设置一下恰当的 缩放系数
-        float maxScale = 3f;
-        float mediumScale = 1.5f;
-        float minScale = 1f;
-        float imageWidth = options.outWidth;
-        float imageHeight = options.outHeight;
-        float screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
-        float screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-        float screenRadio = screenWidth / screenHeight;
-    
-        float imageRadio = imageWidth / imageHeight;
-        if (mDirection / 90 % 2 == 1) {
-            imageRadio = imageHeight / imageWidth;
-        }
-    
-        if (imageWidth < screenWidth && imageHeight < screenHeight) {
-            minScale = imageWidth / screenWidth;
-        }
-        if (imageRadio > screenRadio + 0.05) {
-            mediumScale = screenHeight / (screenWidth / imageRadio);
-            if (imageHeight <= screenHeight) {
-                maxScale = 1.5f * mediumScale;
-            } else {
-                maxScale = 2f * mediumScale;
+        inflate.findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeSelf();
             }
-        } else if (imageRadio < screenRadio - 0.05) {
-            mediumScale = screenWidth / (screenHeight * imageRadio);
-            if (imageWidth <= screenWidth) {
-                maxScale = 1.5f * mediumScale;
-            } else {
-                maxScale = 2f * mediumScale;
-            }
-        }
-        photoView.setMaximumScale(maxScale);
-        photoView.setMediumScale(mediumScale);
-        photoView.setMinimumScale(minScale);
+        });
         
-        ImageLoader imageLoader = ImagePicker.getInstance().getImageLoader();
-        
-        imageLoader.loadCropImage(this, mPath, photoView);
         return inflate;
+    }
+    
+    private void setIndicator(int currentPageIndex) {
+        mCheckableView.setChecked(mList.get(currentPageIndex).getIndex());
     }
     
     
@@ -196,19 +216,16 @@ public class PreviewDialogFragment extends DialogFragment {
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                
             }
             
             @Override
             public void onAnimationEnd(Animation animation) {
-                //mToolbar.setVisibility(View.GONE);
                 isFading = false;
                 isToolbarShow = false;
             }
             
             @Override
             public void onAnimationRepeat(Animation animation) {
-                
             }
         });
         mToolbar.startAnimation(alphaAnimation);
@@ -223,19 +240,16 @@ public class PreviewDialogFragment extends DialogFragment {
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                
             }
             
             @Override
             public void onAnimationEnd(Animation animation) {
-                //mToolbar.setVisibility(View.GONE);
                 isFading = false;
                 isToolbarShow = true;
             }
             
             @Override
             public void onAnimationRepeat(Animation animation) {
-                
             }
         });
         mToolbar.startAnimation(alphaAnimation);
@@ -247,4 +261,5 @@ public class PreviewDialogFragment extends DialogFragment {
         mToolbar.clearAnimation();
         super.onDestroy();
     }
+    
 }

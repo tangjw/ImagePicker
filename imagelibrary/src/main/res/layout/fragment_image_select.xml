@@ -21,6 +21,7 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/ll_select_album"
             android:numColumns="4"
+            android:overScrollMode="never"
             android:padding="1dp"
             android:stretchMode="columnWidth"/>
 

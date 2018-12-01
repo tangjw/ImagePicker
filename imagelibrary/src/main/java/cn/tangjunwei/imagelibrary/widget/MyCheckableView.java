@@ -121,11 +121,13 @@ public class MyCheckableView extends View implements View.OnClickListener, Check
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int width = getWidth();
         int height = getHeight();
-        mCenterPoint.x = width / 2;
-        mCenterPoint.y = height / 2;
+    
         int w = width - getPaddingStart() - getPaddingEnd();
-        
         int h = height - getPaddingTop() - getPaddingBottom();
+    
+        mCenterPoint.x = w / 2 + getPaddingStart();
+        mCenterPoint.y = h / 2 + getPaddingTop();
+        
         mTickPoints[0].x = Math.round((float) w / 12 * 3) + getPaddingStart();
         mTickPoints[0].y = Math.round((float) h / 12 * 6) + getPaddingTop();
         mTickPoints[1].x = Math.round((float) w / 12 * 5) + getPaddingStart();

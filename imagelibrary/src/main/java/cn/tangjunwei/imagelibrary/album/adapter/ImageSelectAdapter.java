@@ -20,7 +20,7 @@ public class ImageSelectAdapter extends BaseAdapter {
     private ImageLoader mImageLoader;
     private int mMaxCount;
     private SparseArray<ImageBean> mSparseArray;
-    private OnCheckedImageChangeListener mListener;
+    private OnImageCheckedChangeListener mListener;
     
     public void refreshData(List<ImageBean> list) {
         mList = list;
@@ -79,7 +79,7 @@ public class ImageSelectAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        if (mMaxCount > 0) {
+        if (mMaxCount > 0 && mSparseArray != null) {
             viewHolder.checkableView.setVisibility(View.VISIBLE);
             viewHolder.checkableView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -147,11 +147,11 @@ public class ImageSelectAdapter extends BaseAdapter {
         return convertView;
     }
     
-    public void setListener(OnCheckedImageChangeListener listener) {
+    public void setListener(OnImageCheckedChangeListener listener) {
         mListener = listener;
     }
     
-    public interface OnCheckedImageChangeListener {
+    public interface OnImageCheckedChangeListener {
         void onCheckedImageChange(SparseArray<ImageBean> sparseArray);
     }
 }

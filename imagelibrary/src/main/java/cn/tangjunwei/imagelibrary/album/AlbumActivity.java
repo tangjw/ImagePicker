@@ -28,6 +28,7 @@ import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
 public class AlbumActivity extends AppCompatActivity implements Picker.OnImageSelectListener {
     
     private ImageSelectFragment mFragment;
+    public SparseArray<ImageBean> mSelectedImageArray;
     
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,8 +92,8 @@ public class AlbumActivity extends AppCompatActivity implements Picker.OnImageSe
     }
     
     public void selectDone(View view) {
-        
-        SparseArray<ImageBean> sparseArray = mFragment.mSparseArray;
+    
+        SparseArray<ImageBean> sparseArray = mSelectedImageArray;
         if (sparseArray != null) {
             String[] paths = new String[sparseArray.size()];
             for (int i = 0; i < sparseArray.size(); i++) {
