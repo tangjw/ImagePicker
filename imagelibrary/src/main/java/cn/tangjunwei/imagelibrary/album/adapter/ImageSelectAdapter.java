@@ -30,6 +30,10 @@ public class ImageSelectAdapter extends BaseAdapter {
     public void refreshData(List<ImageBean> list, SparseArray<ImageBean> sparseArray) {
         mList = list;
         mSparseArray = sparseArray;
+        if (mMaxCount != 0 && mSparseArray == null) {
+            mSparseArray = new SparseArray<>();
+        }
+       
         notifyDataSetChanged();
     }
     
@@ -79,6 +83,7 @@ public class ImageSelectAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+    
         if (mMaxCount > 0 && mSparseArray != null) {
             viewHolder.checkableView.setVisibility(View.VISIBLE);
             viewHolder.checkableView.setOnClickListener(new View.OnClickListener() {

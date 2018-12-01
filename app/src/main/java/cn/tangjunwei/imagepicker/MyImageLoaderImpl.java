@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -99,7 +100,7 @@ public class MyImageLoaderImpl implements ImageLoader {
                 .error(R.drawable.image_placeholder_error)
                 //.thumbnail(0.1f)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                //.transition(DrawableTransitionOptions.withCrossFade())
+                .transition(BitmapTransitionOptions.withCrossFade())
                 //.listener(new MyImageRequestListener())
                 .into(imageView);
     }

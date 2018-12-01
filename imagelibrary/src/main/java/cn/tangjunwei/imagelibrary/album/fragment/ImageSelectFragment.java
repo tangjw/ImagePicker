@@ -194,13 +194,18 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
     @Override
     public void showImage(List<ImageBean> list) {
         mImageList = list;
-        if (mAdapter == null) {
+        // if (mAdapter == null) {
             mAdapter = new ImageSelectAdapter(list, mImageLoader, mMaxCount, mAlbumActivity.mSelectedImageArray);
             mAdapter.setListener(this);
             mGridView.setAdapter(mAdapter);
-        } else {
+        /*} else {
             mAdapter.refreshData(list, mAlbumActivity.mSelectedImageArray);
-        }
+            mGridView.smoothScrollToPosition(0);
+        }*/
+    }
+    
+    public void refreshCheckedImage() {
+        mAdapter.refreshData(mImageList, mAlbumActivity.mSelectedImageArray);
     }
     
     @Override

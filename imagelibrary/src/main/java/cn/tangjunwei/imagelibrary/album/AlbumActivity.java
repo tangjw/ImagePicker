@@ -106,4 +106,10 @@ public class AlbumActivity extends AppCompatActivity implements Picker.OnImageSe
         }
         finish();
     }
+    
+    public void refreshCheckedImage() {
+        if (mFragment != null) {
+            mFragment.refreshCheckedImage();
+        }
+    }
 }

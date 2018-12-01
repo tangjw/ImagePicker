@@ -136,19 +136,19 @@ public class PreviewDialogFragment extends DialogFragment {
                     }
                     currentImageBean.setIndex(0);   // 在list中设置取消选中
                 } else {    // 未选中
-                    mCheckableView.setChecked(mSelectedImageArray.size() + 1);
+                    mCheckableView.setIndex(mSelectedImageArray.size() + 1);
+                    mCheckableView.switchState();
                     currentImageBean.setIndex(mSelectedImageArray.size() + 1);
-                    mCheckableView.setChecked(mSelectedImageArray.size() + 1);
                     mSelectedImageArray.append(currentImageBean.getId(), currentImageBean);
                 }
-                {   // 检测数据
+                /*{   // 检测数据
                     for (int i = 0; i < mSelectedImageArray.size(); i++) {
                         System.out.println("spa: " + mSelectedImageArray.valueAt(i).getIndex());
                     }
                     for (ImageBean imageBean : mList) {
                         System.out.println("mList after: " + imageBean.getIndex());
                     }
-                }
+                }*/
             }
         });
     
@@ -203,8 +203,8 @@ public class PreviewDialogFragment extends DialogFragment {
         mCheckableView.setChecked(mList.get(currentPageIndex).getIndex());
     }
     
-    
     private void closeSelf() {
+        mActivity.refreshCheckedImage();
         dismissAllowingStateLoss();
     }
     
@@ -258,6 +258,7 @@ public class PreviewDialogFragment extends DialogFragment {
     
     @Override
     public void onDestroy() {
+        mActivity.refreshCheckedImage();
         mToolbar.clearAnimation();
         super.onDestroy();
     }
