@@ -18,8 +18,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="12dp"
-            android:padding="4dp"
             android:onClick="back"
+            android:padding="4dp"
             android:src="@drawable/ic_back_white"/>
 
         <TextView
@@ -33,15 +33,16 @@
 
         <TextView
             android:id="@+id/tv_done"
-            android:onClick="selectDone"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:paddingStart="6dp"
-            android:paddingEnd="14dp"
+            android:minWidth="10dp"
+            android:minHeight="10dp"
+            android:onClick="selectDone"
             android:text="完成"
             android:textColor="#fff"
-            android:textSize="16dp"/>
+            android:textSize="14dp"/>
 
     </FrameLayout>
 

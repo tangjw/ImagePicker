@@ -30,7 +30,7 @@
             android:paddingEnd="6dp"
             android:paddingRight="6dp"
             android:paddingBottom="14dp"
-            app:color_checked="?attr/colorAccent"/>
+            app:color_checked="@color/colorImageChecked"/>
 
         <TextView
             android:id="@+id/tv_image_type"

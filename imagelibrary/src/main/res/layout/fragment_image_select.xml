@@ -35,25 +35,27 @@
             android:orientation="horizontal"
             android:weightSum="5">
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2">
 
                 <CheckBox
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:id="@+id/tv_select_album"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:button="@null"
+                    android:layout_marginStart="8dp"
                     android:drawableEnd="@drawable/selector_switch_album_icon"
                     android:ellipsize="end"
-                    android:gravity="center"
+                    android:minWidth="8dp"
                     android:maxLines="1"
                     android:text="@string/album_name_all"
                     android:textColor="@android:color/white"
                     android:textSize="16dp"/>
-            </LinearLayout>
+            </FrameLayout>
 
             <TextView
                 android:layout_width="0dp"
@@ -65,20 +67,25 @@
                 android:textSize="14dp"
                 android:visibility="invisible"/>
 
-
-            <TextView
-                android:id="@+id/tv_preview"
+            <FrameLayout
                 android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="2"
-                android:gravity="right"
-                android:padding="10dp"
-                android:text="预览"
-                android:textColor="@color/colorTextGray"
-                android:textSize="16dp"
-                android:visibility="visible"/>
+                android:layout_height="wrap_content"
+                android:layout_weight="2">
 
+                <Button
+                    android:id="@+id/tv_preview"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="4dp"
+                    android:minWidth="16dp"
+                    android:text="预览"
+                    android:textColor="#999"
+                    android:textSize="16dp"
+                    android:visibility="visible"/>
+
+            </FrameLayout>
 
         </LinearLayout>
     </RelativeLayout>

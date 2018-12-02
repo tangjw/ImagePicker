@@ -36,7 +36,7 @@
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="10dp"
             android:padding="10dp"
-            app:color_checked="?attr/colorAccent"/>
+            app:color_checked="@color/colorImageChecked"/>
 
     </FrameLayout>
 

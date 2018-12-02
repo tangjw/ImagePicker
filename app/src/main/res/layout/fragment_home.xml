@@ -30,4 +30,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <TextView
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="18dp"
+        android:clickable="true"
+        android:minWidth="60dp"
+        android:minHeight="10dp"
+        android:padding="12dp"
+        android:text="完成"
+        android:textSize="10dp"/>
+
+
 </LinearLayout>
