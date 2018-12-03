@@ -14,6 +14,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 
@@ -53,9 +54,10 @@ public class PreviewDialogFragment extends DialogFragment {
     private PreviewPagerAdapter mAdapter;
     private SparseArray<ImageBean> mSelectedImageArray;
     
-    public static PreviewDialogFragment newInstance(int type) {
+    public static PreviewDialogFragment newInstance(int type, int position) {
         Bundle args = new Bundle();
         args.putInt("type", type);
+        args.putInt("position", position);
         PreviewDialogFragment fragment = new PreviewDialogFragment();
         fragment.setArguments(args);
         return fragment;
@@ -85,6 +87,7 @@ public class PreviewDialogFragment extends DialogFragment {
         Bundle arguments = getArguments();
         if (arguments != null) {
             mPreviewType = arguments.getInt("type", 0);
+            mCurrentPageIndex = arguments.getInt("position", 0);
         }
     }
     
@@ -136,10 +139,15 @@ public class PreviewDialogFragment extends DialogFragment {
                     }
                     currentImageBean.setIndex(0);   // 在list中设置取消选中
                 } else {    // 未选中
-                    mCheckableView.setIndex(mSelectedImageArray.size() + 1);
-                    mCheckableView.switchState();
-                    currentImageBean.setIndex(mSelectedImageArray.size() + 1);
-                    mSelectedImageArray.append(currentImageBean.getId(), currentImageBean);
+                    if (mSelectedImageArray.size() < 9) {
+        
+                        mCheckableView.setIndex(mSelectedImageArray.size() + 1);
+                        mCheckableView.switchState();
+                        currentImageBean.setIndex(mSelectedImageArray.size() + 1);
+                        mSelectedImageArray.append(currentImageBean.getId(), currentImageBean);
+                    } else {
+                        Toast.makeText(mActivity.getApplicationContext(), "最多选9张", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 /*{   // 检测数据
                     for (int i = 0; i < mSelectedImageArray.size(); i++) {
@@ -164,16 +172,27 @@ public class PreviewDialogFragment extends DialogFragment {
         });
     
         ImageLoader imageLoader = ImagePicker.getInstance().getImageLoader();
-    
-        ImageBean[] arrays = new ImageBean[mSelectedImageArray.size()];
-        for (int i = 0; i < mSelectedImageArray.size(); i++) {
-            ImageBean imageBean = mSelectedImageArray.valueAt(i);
-            arrays[imageBean.getIndex() - 1] = imageBean;
+        if (mPreviewType == 0) {
+            ImageBean[] arrays = new ImageBean[mSelectedImageArray.size()];
+            for (int i = 0; i < mSelectedImageArray.size(); i++) {
+                ImageBean imageBean = mSelectedImageArray.valueAt(i);
+                arrays[imageBean.getIndex() - 1] = imageBean;
+            }
+            mList = Arrays.asList(arrays);
         }
-        mList = Arrays.asList(arrays);
     
+        if (mPreviewType == 1) {
+            mList = mActivity.mCurrentAlbumImageList;
+        }
+        
+        
         mAdapter = new PreviewPagerAdapter(0, mList, imageLoader, mSelectedImageArray);
         viewPager.setAdapter(mAdapter);
+    
+        if (mPreviewType == 1) {
+            viewPager.setCurrentItem(mCurrentPageIndex, false);
+        }
+        
         setIndicator(mCurrentPageIndex);
     
         mAdapter.setPhotoViewClickListener(new PreviewPagerAdapter.OnPhotoViewClickListener() {

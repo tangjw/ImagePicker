@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -72,7 +73,7 @@ public class ImageSelectAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, final ViewGroup parent) {
         ImageBean imageBean = mList.get(position);
         final ViewHolder viewHolder;
-        Context context = parent.getContext();
+        final Context context = parent.getContext();
         if (convertView == null) {
             convertView = View.inflate(context, R.layout.grid_view_item_image_select, null);
             viewHolder = new ViewHolder();
@@ -98,7 +99,7 @@ public class ImageSelectAdapter extends BaseAdapter {
                             imageBean.setIndex(size + 1);
                             mSparseArray.append(imageBean.getId(), imageBean);
                         } else {
-                            System.out.println("最多选9张");
+                            Toast.makeText(context.getApplicationContext(), "最多选9张", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         if (imageBean.getIndex() == size) { //取消选中，如果是最后一个移除即可

@@ -61,7 +61,6 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
     private List<AlbumBean> mAlbumList;
     private AlbumSelectAdapter mAlbumSelectAdapter;
     private int mCurAlbumIndex = 0;
-    private List<ImageBean> mImageList;
     
     private CropOption mCropOption;
     private int mMaxCount;
@@ -127,7 +126,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
                 public void onClick(View v) {
                     if (mAlbumActivity.mSelectedImageArray != null
                             && mAlbumActivity.mSelectedImageArray.size() > 0) {
-                        PreviewDialogFragment.newInstance(0)
+                        PreviewDialogFragment.newInstance(0, 0)
                                 .show(mActivity.getSupportFragmentManager(),
                                         PreviewDialogFragment.class.getSimpleName());
                     }
@@ -193,11 +192,11 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
     
     @Override
     public void showImage(List<ImageBean> list) {
-        mImageList = list;
+        mAlbumActivity.mCurrentAlbumImageList = list;
         // if (mAdapter == null) {
-            mAdapter = new ImageSelectAdapter(list, mImageLoader, mMaxCount, mAlbumActivity.mSelectedImageArray);
-            mAdapter.setListener(this);
-            mGridView.setAdapter(mAdapter);
+        mAdapter = new ImageSelectAdapter(list, mImageLoader, mMaxCount, mAlbumActivity.mSelectedImageArray);
+        mAdapter.setListener(this);
+        mGridView.setAdapter(mAdapter);
         /*} else {
             mAdapter.refreshData(list, mAlbumActivity.mSelectedImageArray);
             mGridView.smoothScrollToPosition(0);
@@ -205,7 +204,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
     }
     
     public void refreshCheckedImage() {
-        mAdapter.refreshData(mImageList, mAlbumActivity.mSelectedImageArray);
+        mAdapter.refreshData(mAlbumActivity.mCurrentAlbumImageList, mAlbumActivity.mSelectedImageArray);
     }
     
     @Override
@@ -281,8 +280,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mMaxCount > 0) {
-            // TODO: 2018/11/26 预览
-            //PreviewDialogFragment.newInstance(0).show(mActivity.getSupportFragmentManager(), PreviewDialogFragment.class.getSimpleName());
+            PreviewDialogFragment.newInstance(1, position).show(mActivity.getSupportFragmentManager(), PreviewDialogFragment.class.getSimpleName());
         } else {
             FragmentManager fm = mActivity.getSupportFragmentManager();
             CropDialogFragment fragment = (CropDialogFragment) fm.findFragmentByTag(CropDialogFragment.class.getSimpleName());
@@ -290,7 +288,7 @@ public class ImageSelectFragment extends ILBaseFragment implements AlbumView, Ad
             if (fragment != null) {
                 fragment.dismissAllowingStateLoss();
             }
-            fragment = CropDialogFragment.newInstance(mImageList.get(position).getPath(), mCropOption.getWith());
+            fragment = CropDialogFragment.newInstance(mAlbumActivity.mCurrentAlbumImageList.get(position).getPath(), mCropOption.getWith());
             fragment.setOnImageSelectListener((Picker.OnImageSelectListener) mActivity);
             fragment.show(fm, CropDialogFragment.class.getSimpleName());
         }

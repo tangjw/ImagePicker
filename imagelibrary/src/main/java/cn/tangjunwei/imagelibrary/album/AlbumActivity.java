@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.View;
 
+import java.util.List;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -28,7 +30,8 @@ import cn.tangjunwei.imagelibrary.crop.CropDialogFragment;
 public class AlbumActivity extends AppCompatActivity implements Picker.OnImageSelectListener {
     
     private ImageSelectFragment mFragment;
-    public SparseArray<ImageBean> mSelectedImageArray;
+    public SparseArray<ImageBean> mSelectedImageArray = new SparseArray<>();
+    public List<ImageBean> mCurrentAlbumImageList;
     
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
