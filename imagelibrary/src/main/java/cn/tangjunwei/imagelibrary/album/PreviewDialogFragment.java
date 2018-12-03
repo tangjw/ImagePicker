@@ -33,6 +33,7 @@ import cn.tangjunwei.imagelibrary.album.bean.ImageBean;
 import cn.tangjunwei.imagelibrary.core.ImagePicker;
 import cn.tangjunwei.imagelibrary.widget.HackyViewPager;
 import cn.tangjunwei.imagelibrary.widget.MyCheckableView;
+import cn.tangjunwei.imagelibrary.widget.ZoomOutPageTransformer;
 
 /**
  * desc
@@ -140,7 +141,7 @@ public class PreviewDialogFragment extends DialogFragment {
                     currentImageBean.setIndex(0);   // 在list中设置取消选中
                 } else {    // 未选中
                     if (mSelectedImageArray.size() < 9) {
-        
+    
                         mCheckableView.setIndex(mSelectedImageArray.size() + 1);
                         mCheckableView.switchState();
                         currentImageBean.setIndex(mSelectedImageArray.size() + 1);
@@ -187,6 +188,7 @@ public class PreviewDialogFragment extends DialogFragment {
         
         
         mAdapter = new PreviewPagerAdapter(0, mList, imageLoader, mSelectedImageArray);
+        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         viewPager.setAdapter(mAdapter);
     
         if (mPreviewType == 1) {
